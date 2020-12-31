@@ -1,0 +1,9 @@
+{
+  "login": "Login",
+  "userName": "User name",
+  "password": "Password",
+  "enterPassword": "Password is empty",
+  "tabMain": "Home",
+  "tabMenu": "Menu",
+  "tabSetting": "Setting"
+}

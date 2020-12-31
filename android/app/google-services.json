@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "913935125097",
+    "project_id": "cafemanager-53e8a",
+    "storage_bucket": "cafemanager-53e8a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913935125097:android:0e994a76807cb8226eb0f8",
+        "android_client_info": {
+          "package_name": "com.pts.cafe_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913935125097-1ble7rm69splshki7bcfriohdfs4si4i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo8NeWM5rf-WU8yKoho8n1FvsgSIuVO_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913935125097-1ble7rm69splshki7bcfriohdfs4si4i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "913935125097-sforjdu9aia55uq1ifle2aj0b2abt4rt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pts.cafeManager"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913935125097:android:8569e5cdaf0be2536eb0f8",
+        "android_client_info": {
+          "package_name": "com.pts.cafe_manager_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913935125097-1ble7rm69splshki7bcfriohdfs4si4i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo8NeWM5rf-WU8yKoho8n1FvsgSIuVO_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913935125097-1ble7rm69splshki7bcfriohdfs4si4i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "913935125097-sforjdu9aia55uq1ifle2aj0b2abt4rt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pts.cafeManager"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
