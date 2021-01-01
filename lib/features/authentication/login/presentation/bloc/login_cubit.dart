@@ -9,6 +9,8 @@ import 'package:cafe_manager_app/features/authentication/login/presentation/widg
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../../../../common/constants/enum_constants.dart';
+
 class LoginCubit extends Cubit<LoginState> {
   final userNameSubject = BehaviorSubject<String>();
   final passSubject = BehaviorSubject<String>();
@@ -41,6 +43,7 @@ class LoginCubit extends Cubit<LoginState> {
               msg: 'Tên đăng nhập hoặc mật khẩu không tồn tại!'));
         } else {
           if (user.password == password) {
+            user.loginType = LoginType.manager;
             UserManager.instance.saveUserLogin(user);
             emit(LoginSuccessState(userLoginModel: user));
           } else {
@@ -58,6 +61,7 @@ class LoginCubit extends Cubit<LoginState> {
               msg: 'Tên đăng nhập hoặc mật khẩu không tồn tại!'));
         } else {
           if (user.password == password) {
+            user.loginType = LoginType.chef;
             UserManager.instance.saveUserLogin(user);
             emit(LoginSuccessState(userLoginModel: user));
           } else {
@@ -75,6 +79,7 @@ class LoginCubit extends Cubit<LoginState> {
               msg: 'Tên đăng nhập hoặc mật khẩu không tồn tại!'));
         } else {
           if (user.password == password) {
+            user.loginType = LoginType.waiter;
             UserManager.instance.saveUserLogin(user);
             emit(LoginSuccessState(userLoginModel: user));
           } else {

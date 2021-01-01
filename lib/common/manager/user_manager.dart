@@ -33,6 +33,7 @@ class UserManager {
   }
 
   Future<void> saveUserLogin(UserLoginModel userLoginModel) async {
+    this.userLoginModel = userLoginModel;
     _prefs = await SharedPreferences.getInstance();
     await _prefs.setString('user_info',
         userLoginModel != null ? jsonEncode(userLoginModel.toMap()) : null);
