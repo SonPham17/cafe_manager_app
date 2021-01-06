@@ -17,8 +17,16 @@ class MainHomeRemoteDataSource {
     return waiters.snapshots();
   }
 
-  Future<bool> addNewChef(String userLogin, String password, String fullName,
-      String dateOfBirth, String gender, String phone, String address) async {
+  Future<bool> addNewChef(
+      String userLogin,
+      String password,
+      String firstName,
+      String lastName,
+      String email,
+      String dateOfBirth,
+      String gender,
+      String phone,
+      String address) async {
     CollectionReference chefs =
         _firebaseFireStore.collection(FirebaseCollectionConstants.chef);
 
@@ -29,7 +37,9 @@ class MainHomeRemoteDataSource {
           .add({
             'userLogin': userLogin,
             'password': password,
-            'fullName': fullName,
+            'firstName': firstName,
+            'lastName': lastName,
+            'email': email,
             'dateOfBirth': dateOfBirth,
             'gender': gender,
             'phone': phone,
@@ -46,6 +56,10 @@ class MainHomeRemoteDataSource {
     CollectionReference chefs =
         _firebaseFireStore.collection(FirebaseCollectionConstants.chef);
 
-    return chefs.doc(id).delete().then((value) => true).catchError((error) => false);
+    return chefs
+        .doc(id)
+        .delete()
+        .then((value) => true)
+        .catchError((error) => false);
   }
 }

@@ -66,6 +66,12 @@ class _ChefPageState extends State<ChefPage> {
               );
             }
 
+            if (snapshot.data.docs.isEmpty) {
+              return Center(
+                child: Text('Dữ liệu đang trống!'),
+              );
+            }
+            
             return ListView(
               children: snapshot.data.docs.map((DocumentSnapshot document) {
                 return Padding(
@@ -100,11 +106,13 @@ class _ChefPageState extends State<ChefPage> {
                       ),
                     ],
                     child: ItemListModel(
-                      name: document.data()['name'],
+                      name:
+                          '${document.data()['firstName']} ${document.data()['lastName']}',
                       image: ImageConstants.cooking,
-                      login: document.data()['login'],
-                      age: document.data()['age'].toString(),
+                      login: document.data()['userLogin'],
+                      age: document.data()['dateOfBirth'],
                       phone: document.data()['phone'],
+                      address: document.data()['address'],
                     ),
                   ),
                 );

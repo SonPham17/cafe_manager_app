@@ -10,6 +10,10 @@ import 'package:cafe_manager_app/features/main_home/data/datasources/main_home_r
 import 'package:cafe_manager_app/features/main_home/data/repositories/main_home_repository_impl.dart';
 import 'package:cafe_manager_app/features/main_home/domain/usecases/main_home_usecase.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
+import 'package:cafe_manager_app/features/menu/data/datasources/menu_remote_datasource.dart';
+import 'package:cafe_manager_app/features/menu/data/repositories/menu_repository_impl.dart';
+import 'package:cafe_manager_app/features/menu/domain/usecases/menu_usecase.dart';
+import 'package:cafe_manager_app/features/menu/presentation/bloc/menu_cubit.dart';
 import 'package:kiwi/kiwi.dart';
 
 part 'injector.g.dart';
@@ -38,21 +42,25 @@ abstract class Injector {
   @Register.singleton(MainHomeCubit)
   @Register.singleton(LoadingCubit)
   @Register.factory(LoginCubit)
+  @Register.factory(MenuCubit)
   void _configureCubits();
 
   // ============USE CASES============
   @Register.factory(LoginUseCase)
   @Register.factory(MainHomeUseCase)
+  @Register.factory(MenuUseCase)
   void _configureUseCases();
 
   // ============REPOSITORIES==========
   @Register.factory(LoginRepositoryImpl)
   @Register.factory(MainHomeRepositoryImpl)
+  @Register.factory(MenuRepositoryImpl)
   void _configureRepositories();
 
   // ============REMOTE DATA SOURCE====
   @Register.factory(LoginRemoteDataSource)
   @Register.factory(MainHomeRemoteDataSource)
+  @Register.factory(MenuRemoteDataSource)
   void _configureRemoteDataSources();
 
   // ============LOCAL DATA SOURCE=====

@@ -9,6 +9,7 @@ class ItemListModel extends StatelessWidget {
   final String age;
   final String phone;
   final String image;
+  final String address;
 
   ItemListModel({
     this.name,
@@ -16,6 +17,7 @@ class ItemListModel extends StatelessWidget {
     this.age,
     this.phone,
     this.image,
+    this.address,
   });
 
   @override
@@ -28,7 +30,7 @@ class ItemListModel extends StatelessWidget {
       ),
       color: AppColors.primaryColor,
       child: Container(
-        height: 130.h,
+        height: 170.h,
         padding:
             EdgeInsets.only(left: 20.w, right: 20.w, top: 5.h, bottom: 5.h),
         child: Row(
@@ -65,13 +67,19 @@ class ItemListModel extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'Tuổi: $age',
+                    'Ngày sinh: $age',
                     style: TextStyle(color: Colors.white, fontSize: 20.sp),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     'SĐT: $phone',
+                    style: TextStyle(color: Colors.white, fontSize: 20.sp),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    'Địa chỉ: $address',
                     style: TextStyle(color: Colors.white, fontSize: 20.sp),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

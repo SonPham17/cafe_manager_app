@@ -18,10 +18,18 @@ class MainHomeRepositoryImpl extends MainHomeRepository {
   }
 
   @override
-  Future<bool> addNewChef(String userLogin, String password, String fullName,
-      String dateOfBirth, String gender, String phone, String address) {
-    return mainHomeRemoteDataSource.addNewChef(
-        userLogin, password, fullName, dateOfBirth, gender, phone, address);
+  Future<bool> addNewChef(
+      String userLogin,
+      String password,
+      String firstName,
+      String lastName,
+      String email,
+      String dateOfBirth,
+      String gender,
+      String phone,
+      String address) {
+    return mainHomeRemoteDataSource.addNewChef(userLogin, password, firstName,
+        lastName, email, dateOfBirth, gender, phone, address);
   }
 
   @override

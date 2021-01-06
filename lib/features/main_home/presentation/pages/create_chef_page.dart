@@ -24,7 +24,9 @@ class _CreateChefPageState extends State<CreateChefPage> {
 
   TextEditingController _controllerUserLogin;
   TextEditingController _controllerPassword;
-  TextEditingController _controllerFullName;
+  TextEditingController _controllerFirstName;
+  TextEditingController _controllerLastName;
+  TextEditingController _controllerEmail;
   TextEditingController _controllerDateOfBirth;
   TextEditingController _controllerPhone;
   TextEditingController _controllerAddress;
@@ -37,7 +39,9 @@ class _CreateChefPageState extends State<CreateChefPage> {
 
     _controllerUserLogin = TextEditingController();
     _controllerPassword = TextEditingController();
-    _controllerFullName = TextEditingController();
+    _controllerFirstName = TextEditingController();
+    _controllerLastName = TextEditingController();
+    _controllerEmail = TextEditingController();
     _controllerDateOfBirth = TextEditingController();
     _controllerPhone = TextEditingController();
     _controllerAddress = TextEditingController();
@@ -155,7 +159,7 @@ class _CreateChefPageState extends State<CreateChefPage> {
                           width: 10.w,
                         ),
                         Text(
-                          'Full Name',
+                          'First Name',
                           style: TextStyle(fontSize: 25.sp),
                         ),
                       ],
@@ -164,7 +168,79 @@ class _CreateChefPageState extends State<CreateChefPage> {
                       height: 10.h,
                     ),
                     TextField(
-                      controller: _controllerFullName,
+                      controller: _controllerFirstName,
+                      onChanged: (text) {
+                        // _loginCubit.userNameSubject.sink
+                        //     .add(text);
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            gapPadding: 0,
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                            borderSide: BorderSide(
+                              width: 10,
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.person_pin,
+                          size: 25,
+                        ),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        Text(
+                          'Last Name',
+                          style: TextStyle(fontSize: 25.sp),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    TextField(
+                      controller: _controllerLastName,
+                      onChanged: (text) {
+                        // _loginCubit.userNameSubject.sink
+                        //     .add(text);
+                      },
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            gapPadding: 0,
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                            borderSide: BorderSide(
+                              width: 10,
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.email,
+                          size: 25,
+                        ),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        Text(
+                          'Email',
+                          style: TextStyle(fontSize: 25.sp),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    TextField(
+                      controller: _controllerEmail,
                       onChanged: (text) {
                         // _loginCubit.userNameSubject.sink
                         //     .add(text);
@@ -360,7 +436,9 @@ class _CreateChefPageState extends State<CreateChefPage> {
                     _mainHomeCubit.createUserChef(
                       userLogin: _controllerUserLogin.text.trim(),
                       password: _controllerPassword.text,
-                      fullName: _controllerFullName.text.trim(),
+                      firstName: _controllerFirstName.text.trim(),
+                      email: _controllerEmail.text.trim(),
+                      lastName: _controllerLastName.text.trim(),
                       dateOfBirth: _controllerDateOfBirth.text.trim(),
                       gender: _genderType,
                       phone: _controllerPhone.text.trim(),

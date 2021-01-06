@@ -28,6 +28,9 @@ dependencies:
   flutter_svg: ^0.19.1
   lottie: ^0.7.0+1
   flutter_slidable: ^0.5.7
+  image_picker: ^0.6.7+17
+  expandable_group: ^0.0.7
+  floating_action_bubble: 1.0.9
 
 dev_dependencies:
   flutter_test:

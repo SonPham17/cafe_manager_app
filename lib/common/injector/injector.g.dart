@@ -19,6 +19,10 @@ class _$Injector extends Injector {
     container.registerSingleton((c) => LoadingCubit());
     container.registerFactory((c) => LoginCubit(
         loginUseCase: c<LoginUseCase>(), snackBarCubit: c<SnackBarCubit>()));
+    container.registerFactory((c) => MenuCubit(
+        menuUseCase: c<MenuUseCase>(),
+        loadingCubit: c<LoadingCubit>(),
+        snackBarCubit: c<SnackBarCubit>()));
   }
 
   @override
@@ -26,8 +30,10 @@ class _$Injector extends Injector {
     final KiwiContainer container = KiwiContainer();
     container.registerFactory(
         (c) => LoginUseCase(loginRepository: c<LoginRepositoryImpl>()));
+    container.registerFactory((c) =>
+        MainHomeUseCase(mainHomeRepository: c<MainHomeRepositoryImpl>()));
     container.registerFactory(
-        (c) => MainHomeUseCase(mainHomeRepository: c<MainHomeRepositoryImpl>()));
+        (c) => MenuUseCase(menuRepository: c<MenuRepositoryImpl>()));
   }
 
   @override
@@ -38,6 +44,8 @@ class _$Injector extends Injector {
         remoteDataSource: c<LoginRemoteDataSource>()));
     container.registerFactory((c) => MainHomeRepositoryImpl(
         mainHomeRemoteDataSource: c<MainHomeRemoteDataSource>()));
+    container.registerFactory((c) =>
+        MenuRepositoryImpl(menuRemoteDataSource: c<MenuRemoteDataSource>()));
   }
 
   @override
@@ -45,6 +53,7 @@ class _$Injector extends Injector {
     final KiwiContainer container = KiwiContainer();
     container.registerFactory((c) => LoginRemoteDataSource());
     container.registerFactory((c) => MainHomeRemoteDataSource());
+    container.registerFactory((c) => MenuRemoteDataSource());
   }
 
   @override

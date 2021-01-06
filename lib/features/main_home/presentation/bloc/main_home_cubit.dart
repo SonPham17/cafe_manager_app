@@ -25,7 +25,9 @@ class MainHomeCubit extends Cubit<MainHomeState> {
   Future<void> createUserChef(
       {String userLogin,
       String password,
-      String fullName,
+      String firstName,
+      String lastName,
+      String email,
       String dateOfBirth,
       Gender gender,
       String phone,
@@ -33,7 +35,9 @@ class MainHomeCubit extends Cubit<MainHomeState> {
     loadingCubit.showLoading(true);
     if (userLogin.isEmpty &&
         password.isEmpty &&
-        fullName.isEmpty &&
+        firstName.isEmpty &&
+        lastName.isEmpty &&
+        email.isEmpty &&
         dateOfBirth.isEmpty &&
         phone.isEmpty &&
         address.isEmpty) {
@@ -52,7 +56,9 @@ class MainHomeCubit extends Cubit<MainHomeState> {
       final isSuccess = await mainHomeUseCase.addNewChef(
           userLogin: userLogin,
           password: password,
-          fullName: fullName,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
           dateOfBirth: dateOfBirth,
           gender: gioiTinh,
           phone: phone,

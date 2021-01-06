@@ -8,7 +8,9 @@ abstract class MainHomeRepository {
   Future<bool> addNewChef(
       String userLogin,
     String password,
-    String fullName,
+    String firstName,
+    String lastName,
+    String email,
     String dateOfBirth,
     String gender,
     String phone,
