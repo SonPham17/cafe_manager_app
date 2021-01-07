@@ -1,5 +1,6 @@
 import 'package:cafe_manager_app/common/blocs/snackbar/snackbar_cubit.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
+import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/common/widgets/dialog_add_drink.dart';
@@ -10,7 +11,6 @@ import 'package:expandable_group/expandable_group_widget.dart';
 import 'package:floating_action_bubble/floating_action_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 
 class MenuPage extends StatefulWidget {
   @override
