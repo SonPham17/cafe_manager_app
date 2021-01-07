@@ -1,41 +1,47 @@
 import 'dart:io';
 
 import 'package:cafe_manager_app/common/blocs/loading/loading_cubit.dart';
+import 'package:cafe_manager_app/common/blocs/snackbar/snackbar_cubit.dart';
 import 'package:cafe_manager_app/common/constants/font_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
-import 'package:cafe_manager_app/features/menu/presentation/bloc/menu_cubit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
-class DialogAddDrink extends StatefulWidget {
-  final MenuCubit menuCubit;
-  final List<String> listType;
-  final List<int> listIdType;
+class DialogEditDrink extends StatefulWidget {
+  final String typeMenu;
+  final String id;
+  final String urlImage;
+  final String name;
+  final String price;
 
-  DialogAddDrink({this.menuCubit, this.listType, this.listIdType});
+  DialogEditDrink(
+      {this.typeMenu, this.id, this.urlImage, this.name, this.price});
 
   @override
-  _DialogAddDrinkState createState() => _DialogAddDrinkState();
+  _DialogEditDrinkState createState() => _DialogEditDrinkState();
 }
 
-class _DialogAddDrinkState extends State<DialogAddDrink> {
+class _DialogEditDrinkState extends State<DialogEditDrink> {
   final TextEditingController textEditingDrinkController =
       TextEditingController();
   final TextEditingController textEditingPriceController =
       TextEditingController();
   File _image;
   final picker = ImagePicker();
-  String dropdownValue;
+
+  final FirebaseFirestore _firebaseFireStore = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
 
-    dropdownValue = widget.listType[0];
+    textEditingPriceController.text = widget.price;
+    textEditingDrinkController.text = widget.name;
   }
 
   @override
@@ -54,7 +60,7 @@ class _DialogAddDrinkState extends State<DialogAddDrink> {
               alignment: WrapAlignment.center,
               runSpacing: 20.0,
               children: [
-                Text('Thêm món vào menu',
+                Text('Cập nhật thông tin món',
                     style: const TextStyle(
                         color: Color.fromRGBO(132, 62, 187, 1),
                         fontSize: 20,
@@ -76,109 +82,56 @@ class _DialogAddDrinkState extends State<DialogAddDrink> {
                     },
                     child: ClipOval(
                       child: _image == null
-                          ? Image.asset(
-                              ImageConstants.cooking,
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              _image,
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
-                            ),
+                          ? (widget.urlImage == null
+                              ? Image.asset(
+                                  ImageConstants.cafeSplash,
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.network(
+                                  widget.urlImage,
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                ))
+                          : Image.file(_image,
+                              height: 100, width: 100, fit: BoxFit.cover),
                     ),
                   ),
                 ),
-                StreamBuilder<String>(
-                  stream: widget.menuCubit.addDrinkMenuSubject.stream,
-                  builder: (_, snapshot) {
-                    return Container(
-                      height: 55,
-                      child: TextField(
-                        onChanged: (value) {
-                          widget.menuCubit.addDrinkMenuSubject.sink.add(null);
-                        },
-                        controller: textEditingDrinkController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Tên món. VD: Bạc xỉu, nâu đá',
-                          errorText: snapshot.data,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                StreamBuilder<String>(
-                  stream: widget.menuCubit.addPriceMenuSubject.stream,
-                  builder: (_, snapshot) {
-                    return Container(
-                      height: 55,
-                      child: TextField(
-                        controller: textEditingPriceController,
-                        keyboardType: TextInputType.number,
-                        onChanged: (value) {
-                          widget.menuCubit.addPriceMenuSubject.sink.add(null);
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Giá tiền. VD: 30000',
-                          errorText: snapshot.data,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                Row(
-                  children: [
-                    Text('Loại: '),
-                    SizedBox(
-                      width: 30.w,
+                Container(
+                  height: 55,
+                  child: TextField(
+                    controller: textEditingDrinkController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Tên món. VD: Bạc xỉu, nâu đá',
                     ),
-                    DropdownButton<String>(
-                      value: dropdownValue,
-                      icon: Icon(Icons.arrow_circle_down),
-                      iconSize: 24,
-                      elevation: 16,
-                      style: TextStyle(color: Colors.deepPurple),
-                      underline: Container(
-                        height: 1,
-                        color: Colors.deepPurple,
-                      ),
-                      onChanged: (String newValue) {
-                        setState(() {
-                          dropdownValue = newValue;
-                        });
-                      },
-                      items: widget.listType
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+                  ),
+                ),
+                Container(
+                  height: 55,
+                  child: TextField(
+                    controller: textEditingPriceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Giá tiền. VD: 30000',
                     ),
-                  ],
+                  ),
                 ),
                 Row(
                   children: [
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          if (textEditingPriceController.text.isEmpty) {
-                            widget.menuCubit.addPriceMenuSubject.sink
-                                .add('Không được để trống');
-                          }
-                          if (textEditingDrinkController.text.isEmpty) {
-                            widget.menuCubit.addDrinkMenuSubject.sink
-                                .add('Không được để trống');
-                          }
+                          Injector.resolve<LoadingCubit>().showLoading(true);
+
                           if (textEditingDrinkController.text.isNotEmpty &&
                               textEditingPriceController.text.isNotEmpty) {
                             var linkPath;
 
-                            Injector.resolve<LoadingCubit>().showLoading(true);
                             if (_image != null) {
                               String fileName = basename(_image.path);
                               Reference firebaseStorageRef = FirebaseStorage
@@ -193,16 +146,40 @@ class _DialogAddDrinkState extends State<DialogAddDrink> {
                                   await taskSnapshot.ref.getDownloadURL();
                             }
 
-                            final indexType =
-                                widget.listType.indexOf(dropdownValue);
-                            await widget.menuCubit.addDrink(
-                                widget.listIdType[indexType],
-                                linkPath,
-                                textEditingDrinkController.text.trim(),
-                                textEditingPriceController.text.trim());
+                            CollectionReference drink =
+                                _firebaseFireStore.collection(widget.typeMenu);
+
+                            if (linkPath != null) {
+                              await drink.doc(widget.id).update({
+                                'name': textEditingDrinkController.text.trim(),
+                                'price': textEditingPriceController.text.trim(),
+                                'image': linkPath,
+                              }).then((value) {
+                                Injector.resolve<SnackBarCubit>().showSnackBar(
+                                    'Cập nhật thông tin thành công!');
+                              }).catchError((error) {
+                                Injector.resolve<SnackBarCubit>().showSnackBar(
+                                    'Cập nhật thông tin thất bại!');
+                              });
+                            } else {
+                              await drink.doc(widget.id).update({
+                                'name': textEditingDrinkController.text.trim(),
+                                'price': textEditingPriceController.text.trim(),
+                              }).then((value) {
+                                Injector.resolve<SnackBarCubit>().showSnackBar(
+                                    'Cập nhật thông tin thành công!');
+                              }).catchError((error) {
+                                Injector.resolve<SnackBarCubit>().showSnackBar(
+                                    'Cập nhật thông tin thất bại!');
+                              });
+                            }
 
                             Navigator.of(context).pop();
+                          } else {
+                            Injector.resolve<SnackBarCubit>().showSnackBar(
+                                'Các trường không được để trống!');
                           }
+                          Injector.resolve<LoadingCubit>().showLoading(false);
                         },
                         child: Center(
                           child: Container(
@@ -213,7 +190,7 @@ class _DialogAddDrinkState extends State<DialogAddDrink> {
                                   color: const Color.fromRGBO(132, 62, 187, 1)),
                               child: Center(
                                 child: Text(
-                                  'Thêm',
+                                  'Cập nhật',
                                   style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
@@ -230,7 +207,6 @@ class _DialogAddDrinkState extends State<DialogAddDrink> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          widget.menuCubit.addTypeMenuSubject.sink.add(null);
                           Navigator.of(context).pop();
                         },
                         child: Center(

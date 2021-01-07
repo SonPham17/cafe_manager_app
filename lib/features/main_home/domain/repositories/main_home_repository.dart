@@ -17,5 +17,18 @@ abstract class MainHomeRepository {
     String address,
   );
 
+  Future<bool> addNewWaiter(
+      String userLogin,
+      String password,
+      String firstName,
+      String lastName,
+      String email,
+      String dateOfBirth,
+      String gender,
+      String phone,
+      String address,
+      );
+
   Future<bool> deleteChef(String id);
+  Future<bool> deleteWaiter(String id);
 }

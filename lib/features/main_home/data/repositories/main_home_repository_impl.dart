@@ -36,4 +36,15 @@ class MainHomeRepositoryImpl extends MainHomeRepository {
   Future<bool> deleteChef(String id) {
     return mainHomeRemoteDataSource.deleteChef(id);
   }
+
+  @override
+  Future<bool> deleteWaiter(String id) {
+    return mainHomeRemoteDataSource.deleteWaiter(id);
+  }
+
+  @override
+  Future<bool> addNewWaiter(String userLogin, String password, String firstName, String lastName, String email, String dateOfBirth, String gender, String phone, String address) {
+    return mainHomeRemoteDataSource.addNewWaiter(userLogin, password, firstName,
+        lastName, email, dateOfBirth, gender, phone, address);
+  }
 }

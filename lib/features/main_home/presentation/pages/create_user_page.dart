@@ -11,12 +11,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_translate/global.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 
-class CreateChefPage extends StatefulWidget {
+class CreateUserPage extends StatefulWidget {
+  final String type;
+
+  CreateUserPage({this.type});
+
   @override
-  _CreateChefPageState createState() => _CreateChefPageState();
+  _CreateUserPageState createState() => _CreateUserPageState();
 }
 
-class _CreateChefPageState extends State<CreateChefPage> {
+class _CreateUserPageState extends State<CreateUserPage> {
   MainHomeCubit _mainHomeCubit;
 
   Gender _genderType = Gender.male;
@@ -51,7 +55,8 @@ class _CreateChefPageState extends State<CreateChefPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tạo mới tài khoản đầu bếp'),
+        title: Text(
+            'Tạo mới tài khoản ${widget.type == 'chef' ? 'đầu bếp' : 'bồi bàn'}'),
       ),
       body: GestureDetector(
         onTap: () {
@@ -379,6 +384,7 @@ class _CreateChefPageState extends State<CreateChefPage> {
                         // _loginCubit.userNameSubject.sink
                         //     .add(text);
                       },
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                             gapPadding: 0,
@@ -427,23 +433,41 @@ class _CreateChefPageState extends State<CreateChefPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 20.h,),
+              SizedBox(
+                height: 20.h,
+              ),
               ButtonTheme(
                 minWidth: 180.w,
                 height: 60.h,
                 child: RaisedButton(
-                  onPressed: () {
-                    _mainHomeCubit.createUserChef(
-                      userLogin: _controllerUserLogin.text.trim(),
-                      password: _controllerPassword.text,
-                      firstName: _controllerFirstName.text.trim(),
-                      email: _controllerEmail.text.trim(),
-                      lastName: _controllerLastName.text.trim(),
-                      dateOfBirth: _controllerDateOfBirth.text.trim(),
-                      gender: _genderType,
-                      phone: _controllerPhone.text.trim(),
-                      address: _controllerAddress.text.trim(),
-                    );
+                  onPressed: () async {
+                    if(widget.type == 'chef'){
+                      await _mainHomeCubit.createUserChef(
+                        userLogin: _controllerUserLogin.text.trim(),
+                        password: _controllerPassword.text,
+                        firstName: _controllerFirstName.text.trim(),
+                        email: _controllerEmail.text.trim(),
+                        lastName: _controllerLastName.text.trim(),
+                        dateOfBirth: _controllerDateOfBirth.text.trim(),
+                        gender: _genderType,
+                        phone: _controllerPhone.text.trim(),
+                        address: _controllerAddress.text.trim(),
+                      );
+                    }else{
+                      await _mainHomeCubit.createUserWaiter(
+                        userLogin: _controllerUserLogin.text.trim(),
+                        password: _controllerPassword.text,
+                        firstName: _controllerFirstName.text.trim(),
+                        email: _controllerEmail.text.trim(),
+                        lastName: _controllerLastName.text.trim(),
+                        dateOfBirth: _controllerDateOfBirth.text.trim(),
+                        gender: _genderType,
+                        phone: _controllerPhone.text.trim(),
+                        address: _controllerAddress.text.trim(),
+                      );
+                    }
+
+                    Navigator.of(context).pop();
                   },
                   color: AppColors.primaryColor,
                   shape: RoundedRectangleBorder(
@@ -455,7 +479,9 @@ class _CreateChefPageState extends State<CreateChefPage> {
                           fontSize: 27.sp)),
                 ),
               ),
-              SizedBox(height: 20.h,),
+              SizedBox(
+                height: 20.h,
+              ),
             ],
           ),
         ),

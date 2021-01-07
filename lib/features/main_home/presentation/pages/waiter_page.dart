@@ -1,16 +1,21 @@
 import 'dart:ui';
 
 import 'package:cafe_manager_app/common/constants/enum_constants.dart';
+import 'package:cafe_manager_app/common/constants/firebase_collection_constants.dart';
 import 'package:cafe_manager_app/common/constants/icon_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
 import 'package:cafe_manager_app/common/manager/user_manager.dart';
+import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/common/utils/screen_utils.dart';
+import 'package:cafe_manager_app/common/widgets/dialog_question.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/widgets/item_list_model_widget.dart';
+import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 
@@ -38,7 +43,11 @@ class _WaiterPageState extends State<WaiterPage> {
           UserManager.instance.getUserLoginType() == LoginType.manager
               ? IconButton(
                   icon: Icon(Icons.person_add),
-                  onPressed: () {},
+                  onPressed: () {
+                    RoutesTabBottom.instance.navigateTo(
+                        TabItem.main, RouteName.createChef,
+                        arguments: 'waiter');
+                  },
                 )
               : Container()
         ],
@@ -67,14 +76,72 @@ class _WaiterPageState extends State<WaiterPage> {
                   );
                 }
 
+                if (snapshot.data.docs.isEmpty) {
+                  return Center(
+                    child: Text('Dữ liệu đang trống!'),
+                  );
+                }
+
                 return ListView(
                   children: snapshot.data.docs.map((DocumentSnapshot document) {
-                    return ItemListModel(
-                      name: document.data()['name'],
-                      image: ImageConstants.waiter,
-                      login: document.data()['login'],
-                      age: document.data()['age'].toString(),
-                      phone: document.data()['phone'],
+                    return Padding(
+                      padding: EdgeInsets.only(top: 10.h),
+                      child: Slidable(
+                        actionPane: SlidableDrawerActionPane(),
+                        actionExtentRatio: 0.25,
+                        secondaryActions: [
+                          IconSlideAction(
+                            caption: 'Sửa',
+                            color: Colors.black45,
+                            icon: Icons.more_horiz,
+                            onTap: () {
+                              RoutesTabBottom.instance.navigateTo(
+                                  TabItem.main, RouteName.tabEditProfile,
+                                  arguments: {
+                                    'type': FirebaseCollectionConstants.waiter,
+                                    'id': document.id,
+                                    'address': document.data()['address'],
+                                    'dateOfBirth':
+                                        document.data()['dateOfBirth'],
+                                    'phone': document.data()['phone'],
+                                    'email': document.data()['email'],
+                                    'firstName': document.data()['firstName'],
+                                    'lastName': document.data()['lastName'],
+                                    'gender': document.data()['gender'],
+                                    'password': document.data()['password'],
+                                  });
+                            },
+                          ),
+                          IconSlideAction(
+                            caption: 'Xoá',
+                            color: Colors.red,
+                            icon: Icons.delete,
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => DialogQuestion(
+                                    id: document.id,
+                                    isWaiter: true,
+                                    mainHomeCubit: _mainHomeCubit,
+                                    i18nLocalizationContent:
+                                        'Bạn có muốn xoá thông tin thành viên này không ?',
+                                    i18nLocalizationConfirmText: 'Đồng ý',
+                                    i18nLocalizationCancelText: 'Huỷ',
+                                    i18nLocalizationTitle: 'Xoá nhân viên'),
+                              );
+                            },
+                          ),
+                        ],
+                        child: ItemListModel(
+                          name:
+                              '${document.data()['firstName']} ${document.data()['lastName']}',
+                          image: ImageConstants.waiter,
+                          login: document.data()['userLogin'],
+                          age: document.data()['dateOfBirth'],
+                          phone: document.data()['phone'],
+                          address: document.data()['address'],
+                        ),
+                      ),
                     );
                   }).toList(),
                 );

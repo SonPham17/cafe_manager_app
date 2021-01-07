@@ -28,7 +28,25 @@ class MainHomeUseCase {
         lastName, email, dateOfBirth, gender, phone, address);
   }
 
+  Future<bool> addNewWaiter(
+      {String userLogin,
+        String password,
+        String firstName,
+        String lastName,
+        String email,
+        String dateOfBirth,
+        String gender,
+        String phone,
+        String address}) {
+    return mainHomeRepository.addNewWaiter(userLogin, password, firstName,
+        lastName, email, dateOfBirth, gender, phone, address);
+  }
+
   Future<bool> deleteChef(String id) {
     return mainHomeRepository.deleteChef(id);
+  }
+
+  Future<bool> deleteWaiter(String id) {
+    return mainHomeRepository.deleteWaiter(id);
   }
 }

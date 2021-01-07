@@ -1,25 +1,27 @@
+import 'package:cafe_manager_app/common/blocs/loading/loading_cubit.dart';
+import 'package:cafe_manager_app/common/blocs/snackbar/snackbar_cubit.dart';
 import 'package:cafe_manager_app/common/constants/font_constants.dart';
-import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
+import 'package:cafe_manager_app/common/injector/injector.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class DialogQuestion extends StatelessWidget {
+class DialogDeleteMenu extends StatelessWidget {
   final String i18nLocalizationTitle;
   final String i18nLocalizationContent;
   final String i18nLocalizationConfirmText;
   final String i18nLocalizationCancelText;
-  final MainHomeCubit mainHomeCubit;
   final String id;
-  final bool isWaiter;
+  final String typeMenu;
 
-  DialogQuestion({
-    this.id,
-    this.i18nLocalizationCancelText,
-    this.i18nLocalizationConfirmText,
-    this.i18nLocalizationContent,
-    this.i18nLocalizationTitle,
-    this.mainHomeCubit,
-    this.isWaiter,
-  });
+  final FirebaseFirestore _firebaseFireStore = FirebaseFirestore.instance;
+
+  DialogDeleteMenu(
+      {this.i18nLocalizationTitle,
+      this.i18nLocalizationContent,
+      this.i18nLocalizationConfirmText,
+      this.i18nLocalizationCancelText,
+      this.typeMenu,
+      this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +58,20 @@ class DialogQuestion extends StatelessWidget {
                 children: [
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        if (isWaiter) {
-                          mainHomeCubit.deleteWaiter(id);
-                        } else {
-                          mainHomeCubit.deleteChef(id);
-                        }
+                      onTap: () async {
+                        Injector.resolve<LoadingCubit>().showLoading(true);
+
+                        CollectionReference menu =
+                        _firebaseFireStore.collection(typeMenu);
+
+                        await menu
+                            .doc(id)
+                            .delete()
+                            .then((value) => Injector.resolve<SnackBarCubit>().showSnackBar('Xoá thành công!'))
+                            .catchError((error) => Injector.resolve<SnackBarCubit>().showSnackBar('Xoá thất bại!'));
+
+                        Injector.resolve<LoadingCubit>().showLoading(false);
+
                         Navigator.of(context).pop();
                       },
                       child: Center(

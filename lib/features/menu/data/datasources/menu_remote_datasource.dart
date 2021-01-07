@@ -10,6 +10,21 @@ class MenuRemoteDataSource {
     return menuType.snapshots();
   }
 
+  Future<bool> addDrink(
+      int idTypeMenu, String urlImage, String drinkName, String price) async {
+    CollectionReference drink = _firebaseFireStore.collection('$idTypeMenu');
+
+    return drink
+        .add({
+          'idType': idTypeMenu,
+          'name': drinkName,
+          'price': price,
+          'image': urlImage,
+        })
+        .then((value) => true)
+        .catchError((error) => false);
+  }
+
   Future<bool> addTypeMenu(String type) async {
     CollectionReference menuType =
         _firebaseFireStore.collection(FirebaseCollectionConstants.menuType);

@@ -1,4 +1,5 @@
 import 'package:cafe_manager_app/common/constants/enum_constants.dart';
+import 'package:cafe_manager_app/common/constants/firebase_collection_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
 import 'package:cafe_manager_app/common/manager/user_manager.dart';
@@ -7,6 +8,7 @@ import 'package:cafe_manager_app/common/widgets/dialog_question.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/widgets/item_list_model_widget.dart';
 import 'package:cafe_manager_app/features/routes.dart';
+import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
@@ -38,7 +40,9 @@ class _ChefPageState extends State<ChefPage> {
               ? IconButton(
                   icon: Icon(Icons.person_add),
                   onPressed: () {
-                    Routes.instance.navigateTo(RouteName.createChef);
+                    RoutesTabBottom.instance.navigateTo(
+                        TabItem.main, RouteName.createChef,
+                        arguments: 'chef');
                   },
                 )
               : Container()
@@ -71,7 +75,7 @@ class _ChefPageState extends State<ChefPage> {
                 child: Text('Dữ liệu đang trống!'),
               );
             }
-            
+
             return ListView(
               children: snapshot.data.docs.map((DocumentSnapshot document) {
                 return Padding(
@@ -84,7 +88,22 @@ class _ChefPageState extends State<ChefPage> {
                         caption: 'Sửa',
                         color: Colors.black45,
                         icon: Icons.more_horiz,
-                        onTap: () {},
+                        onTap: () {
+                          RoutesTabBottom.instance.navigateTo(
+                              TabItem.main, RouteName.tabEditProfile,
+                              arguments: {
+                                'type': FirebaseCollectionConstants.chef,
+                                'id': document.id,
+                                'address': document.data()['address'],
+                                'dateOfBirth': document.data()['dateOfBirth'],
+                                'phone': document.data()['phone'],
+                                'email': document.data()['email'],
+                                'firstName': document.data()['firstName'],
+                                'lastName': document.data()['lastName'],
+                                'gender': document.data()['gender'],
+                                'password': document.data()['password'],
+                              });
+                        },
                       ),
                       IconSlideAction(
                         caption: 'Xoá',
@@ -95,6 +114,7 @@ class _ChefPageState extends State<ChefPage> {
                             context: context,
                             builder: (_) => DialogQuestion(
                                 id: document.id,
+                                isWaiter: false,
                                 mainHomeCubit: _mainHomeCubit,
                                 i18nLocalizationContent:
                                     'Bạn có muốn xoá thông tin thành viên này không ?',

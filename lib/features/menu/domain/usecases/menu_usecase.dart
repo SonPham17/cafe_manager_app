@@ -14,4 +14,8 @@ class MenuUseCase{
   Future<bool> addTypeMenu(String type){
     return menuRepository.addTypeMenu(type);
   }
+
+  Future<bool> addDrink(int idTypeMenu, String urlImage, String drinkName, String price){
+    return menuRepository.addDrink(idTypeMenu, urlImage, drinkName, price);
+  }
 }

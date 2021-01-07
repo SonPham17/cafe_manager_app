@@ -18,4 +18,9 @@ class MenuRepositoryImpl extends MenuRepository{
     return menuRemoteDataSource.getStreamListTypeMenu();
   }
 
+  @override
+  Future<bool> addDrink(int idTypeMenu, String urlImage, String drinkName, String price) {
+    return menuRemoteDataSource.addDrink(idTypeMenu,urlImage,drinkName,price);
+  }
+
 }

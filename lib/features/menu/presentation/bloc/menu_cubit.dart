@@ -33,6 +33,18 @@ class MenuCubit extends Cubit<MenuState> {
     }
   }
 
+  Future<void> addDrink(
+      int idTypeMenu, String urlImage, String drinkName, String price) async {
+    final result =
+        await menuUseCase.addDrink(idTypeMenu, urlImage, drinkName, price);
+    loadingCubit.showLoading(false);
+    if (result) {
+      snackBarCubit.showSnackBar('Thêm thành công!');
+    } else {
+      snackBarCubit.showSnackBar('Thêm thất bại!');
+    }
+  }
+
   @override
   Future<void> close() {
     addTypeMenuSubject.close();

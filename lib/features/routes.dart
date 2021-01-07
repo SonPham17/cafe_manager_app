@@ -3,7 +3,7 @@ import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/features/authentication/login/presentation/pages/login_page.dart';
 import 'package:cafe_manager_app/features/authentication/splash/presentation/pages/splash_page.dart';
 import 'package:cafe_manager_app/features/home/presentation/pages/home_page.dart';
-import 'package:cafe_manager_app/features/main_home/presentation/pages/create_chef_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/create_user_page.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -51,9 +51,6 @@ class Routes {
         break;
       case RouteName.home:
         return FadeInRoute(widget: HomePage());
-        break;
-      case RouteName.createChef:
-        return FadeInRoute(widget: CreateChefPage());
         break;
       default:
         return _emptyRoute(settings);

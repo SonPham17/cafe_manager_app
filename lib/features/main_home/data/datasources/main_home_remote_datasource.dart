@@ -52,9 +52,55 @@ class MainHomeRemoteDataSource {
     }
   }
 
+  Future<bool> addNewWaiter(
+      String userLogin,
+      String password,
+      String firstName,
+      String lastName,
+      String email,
+      String dateOfBirth,
+      String gender,
+      String phone,
+      String address) async {
+    CollectionReference chefs =
+    _firebaseFireStore.collection(FirebaseCollectionConstants.waiter);
+
+    final checkIsExist =
+    await chefs.where('userLogin', isEqualTo: userLogin).get();
+    if (checkIsExist.docs.isEmpty) {
+      return chefs
+          .add({
+        'userLogin': userLogin,
+        'password': password,
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'dateOfBirth': dateOfBirth,
+        'gender': gender,
+        'phone': phone,
+        'address': address,
+      })
+          .then((value) => true)
+          .catchError((error) => false);
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> deleteChef(String id) {
     CollectionReference chefs =
         _firebaseFireStore.collection(FirebaseCollectionConstants.chef);
+
+    return chefs
+        .doc(id)
+        .delete()
+        .then((value) => true)
+        .catchError((error) => false);
+  }
+
+  Future<bool> deleteWaiter(String id) {
+    CollectionReference chefs =
+    _firebaseFireStore.collection(FirebaseCollectionConstants.waiter);
 
     return chefs
         .doc(id)
