@@ -55,31 +55,34 @@ class _DialogAddDrinkState extends State<DialogAddDrink> {
                         fontSize: 20,
                         fontFamily: FontConstants.montserratBold,
                         letterSpacing: -0.78)),
-                GestureDetector(
-                  onTap: () async {
-                    final pickedFile =
-                        await picker.getImage(source: ImageSource.gallery);
+                Center(
+                  child: GestureDetector(
+                    onTap: () async {
+                      final pickedFile =
+                          await picker.getImage(source: ImageSource.gallery);
 
-                    setState(() {
-                      if (pickedFile != null) {
-                        _image = File(pickedFile.path);
-                      } else {
-                        print('No image selected.');
-                      }
-                    });
-                  },
-                  child: Container(
-                    width: 150.w,
-                    height: 150.h,
-                    padding: const EdgeInsets.all(3),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: CircleAvatar(
-                      backgroundImage: _image == null
-                          ? AssetImage(ImageConstants.avatarDemo)
-                          : Image.file(_image),
+                      setState(() {
+                        if (pickedFile != null) {
+                          _image = File(pickedFile.path);
+                        } else {
+                          print('No image selected.');
+                        }
+                      });
+                    },
+                    child: ClipOval(
+                      child: _image == null
+                          ? Image.asset(
+                              ImageConstants.cooking,
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.file(
+                              _image,
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
                 ),
