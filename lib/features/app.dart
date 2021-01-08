@@ -68,7 +68,7 @@ class App extends StatelessWidget {
         initialRoute: RouteName.splash,
         theme: ThemeData(
           primaryColor: AppColors.primaryColor,
-          fontFamily: 'Montserrat Regular',
+          fontFamily: 'Montserrat Bold',
         ),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,

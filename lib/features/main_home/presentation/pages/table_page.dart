@@ -3,9 +3,11 @@ import 'package:cafe_manager_app/common/constants/firebase_collection_constants.
 import 'package:cafe_manager_app/common/constants/icon_constants.dart';
 import 'package:cafe_manager_app/common/extensions/my_iterable_extensions.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
+import 'package:cafe_manager_app/common/injector/injector.dart';
 import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/common/widgets/dialog_add_table.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
 import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -76,9 +78,14 @@ class _TablePageState extends State<TablePage> {
               itemBuilder: (_, index) => data[index]['isEmpty']
                   ? GestureDetector(
                       onTap: () {
+                        Injector.resolve<MainHomeCubit>().resetState();
+
                         RoutesTabBottom.instance.navigateTo(
                             TabItem.main, RouteName.tabOrderTable,
-                            arguments: data[index]['id'].toString());
+                            arguments: {
+                              'id': data[index]['id'],
+                              'idBan': data[index].id,
+                            });
                       },
                       child: Container(
                         padding: EdgeInsets.all(10),

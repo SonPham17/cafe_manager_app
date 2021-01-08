@@ -2,7 +2,9 @@ import 'package:cafe_manager_app/common/constants/enum_constants.dart';
 import 'package:cafe_manager_app/common/navigation/fade_in_route.dart';
 import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/chef_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/confirm_order_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/create_user_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/detail_order_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/edit_profile_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/main_home_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/order_page.dart';
@@ -51,6 +53,9 @@ class RoutesTabBottom {
   dynamic pop(TabItem tabItem, {dynamic result}) =>
       navigatorKeys[tabItem].currentState.pop(result);
 
+  dynamic popUntil(TabItem tabItem, {dynamic result}) =>
+      navigatorKeys[tabItem].currentState.popUntil((route) => route.isFirst);
+
   static Route<dynamic> generateRouteMain(RouteSettings settings) {
     switch (settings.name) {
       case RouteName.tabRoot:
@@ -62,6 +67,15 @@ class RoutesTabBottom {
       case RouteName.tabHomeWaiter:
         return FadeInRoute(widget: WaiterPage());
         break;
+      case RouteName.tabConfirmOrder:
+        final param = settings.arguments as Map<String, dynamic>;
+        return FadeInRoute(
+            widget: ConfirmOrderPage(
+          dataMenuDrink: param['listOrder'],
+          ban: '${int.parse(param['ban']) + 1}',
+          idBan: param['idBan'],
+        ));
+        break;
       case RouteName.tabTable:
         return FadeInRoute(widget: TablePage());
         break;
@@ -69,9 +83,11 @@ class RoutesTabBottom {
         return FadeInRoute(widget: OrderPage());
         break;
       case RouteName.tabOrderTable:
+        final param = settings.arguments as Map<String, dynamic>;
         return FadeInRoute(
             widget: OrderTablePage(
-          id: settings.arguments as String,
+          id: param['id'].toString(),
+          idBan: param['idBan'],
         ));
         break;
       case RouteName.createChef:
@@ -79,6 +95,12 @@ class RoutesTabBottom {
         return FadeInRoute(
             widget: CreateUserPage(
           type: type,
+        ));
+        break;
+      case RouteName.tabDetailOrder:
+        return FadeInRoute(
+            widget: DetailOrderPage(
+          orderModel: settings.arguments,
         ));
         break;
       case RouteName.tabEditProfile:

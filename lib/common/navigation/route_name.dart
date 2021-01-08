@@ -10,5 +10,7 @@ class RouteName{
   static const String tabTable = 'table';
   static const String tabOrder = 'order';
   static const String tabOrderTable = 'order_table';
+  static const String tabConfirmOrder = 'confirm_order';
+  static const String tabDetailOrder = 'detail_order';
 
 }

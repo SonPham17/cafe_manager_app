@@ -1,20 +1,28 @@
+import 'package:cafe_manager_app/common/constants/enum_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/extensions/my_iterable_extensions.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
+import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/common/widgets/custom_expandable_listview_widget.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_state.dart';
 import 'package:cafe_manager_app/features/menu/data/models/menu_type_model.dart';
 import 'package:cafe_manager_app/features/menu/presentation/bloc/menu_cubit.dart';
+import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rxdart/rxdart.dart';
 
 class OrderTablePage extends StatefulWidget {
   final String id;
+  final String idBan;
 
-  OrderTablePage({this.id});
+  OrderTablePage({this.id,this.idBan});
 
   @override
   _OrderTablePageState createState() => _OrderTablePageState();
@@ -22,7 +30,16 @@ class OrderTablePage extends StatefulWidget {
 
 class _OrderTablePageState extends State<OrderTablePage> {
   final formatter = new NumberFormat("#,###");
-  final List<MenuTypeModel> dataMenuType = [];
+  List<MenuTypeModel> dataMenuType = [];
+  final List<MenuDrink> dataMenuDrink = [];
+  MainHomeCubit _mainHomeCubit;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _mainHomeCubit = Injector.resolve<MainHomeCubit>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,11 +103,11 @@ class _OrderTablePageState extends State<OrderTablePage> {
                       var data = snapshot1.data.docs;
                       data = data.sortedBy((e) => e.data()['id']);
 
-                      dataMenuType.clear();
-                      data.forEach((element) {
-                        dataMenuType
-                            .add(MenuTypeModel.fromJson(element.data()));
-                      });
+                      dataMenuType = data
+                          .map((element) =>
+                              MenuTypeModel.fromJson(element.data()))
+                          .toList();
+
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: dataMenuType.length,
@@ -148,9 +165,19 @@ class _OrderTablePageState extends State<OrderTablePage> {
                                 );
                               }
 
+                              final data = snapshot.data.docs;
+                              final dataDrink = data
+                                  .map((e) => MenuDrink.fromJson(e.data(),e.id))
+                                  .toList();
+
+                              data.forEach((element) {
+                                dataMenuDrink
+                                    .add(MenuDrink.fromJson(element.data(),element.id));
+                              });
+
                               return CustomExpandableListView(
                                 header: _header('${dataMenuType[index].type}'),
-                                items: snapshot.data.docs
+                                items: dataDrink
                                     .map((document) => Container(
                                           margin: EdgeInsets.only(
                                               left: 10.w,
@@ -168,12 +195,10 @@ class _OrderTablePageState extends State<OrderTablePage> {
                                                         BorderRadius.circular(
                                                             10),
                                                     image: DecorationImage(
-                                                        image: document.data()[
-                                                                    'image'] !=
+                                                        image: document.image !=
                                                                 null
                                                             ? NetworkImage(
-                                                                document.data()[
-                                                                    'image'])
+                                                                document.image)
                                                             : AssetImage(
                                                                 ImageConstants
                                                                     .cafeSplash),
@@ -196,7 +221,7 @@ class _OrderTablePageState extends State<OrderTablePage> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        document.data()['name'],
+                                                        document.name,
                                                         style: TextStyle(
                                                             fontSize: 25.sp),
                                                         maxLines: 1,
@@ -208,7 +233,7 @@ class _OrderTablePageState extends State<OrderTablePage> {
                                                             MainAxisSize.max,
                                                         children: [
                                                           Text(
-                                                            '${formatter.format(int.parse(document.data()['price']))} đồng',
+                                                            '${formatter.format(int.parse(document.price))} đồng',
                                                             style: TextStyle(
                                                                 fontSize:
                                                                     20.sp),
@@ -220,27 +245,73 @@ class _OrderTablePageState extends State<OrderTablePage> {
                                                           Expanded(
                                                             child: Row(
                                                               children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .remove_circle_outlined,
-                                                                  size: 35,
+                                                                IconButton(
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .remove_circle_outlined,
+                                                                    size: 35,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () {
+                                                                    if (document
+                                                                            .order >
+                                                                        0) {
+                                                                      document
+                                                                          .order--;
+                                                                      final index = dataMenuDrink.indexWhere((element) =>
+                                                                          document
+                                                                              .name ==
+                                                                          element
+                                                                              .name);
+                                                                      dataMenuDrink[index]
+                                                                              .order =
+                                                                          document
+                                                                              .order;
+                                                                      _mainHomeCubit
+                                                                          .giamOrder(
+                                                                              dataMenuDrink);
+                                                                    }
+                                                                  },
                                                                 ),
                                                                 SizedBox(
                                                                   width: 10.w,
                                                                 ),
-                                                                Text(
-                                                                  '1',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          30.sp),
-                                                                ),
+                                                                BlocBuilder<
+                                                                        MainHomeCubit,
+                                                                        MainHomeState>(
+                                                                    cubit:
+                                                                        _mainHomeCubit,
+                                                                    builder: (_,
+                                                                        state) {
+                                                                      return Text(
+                                                                          '${document.order}');
+                                                                    }),
                                                                 SizedBox(
                                                                   width: 10.w,
                                                                 ),
-                                                                Icon(
-                                                                  Icons
-                                                                      .add_circle,
-                                                                  size: 35,
+                                                                IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    document
+                                                                        .order++;
+                                                                    final index = dataMenuDrink.indexWhere((element) =>
+                                                                        document
+                                                                            .name ==
+                                                                        element
+                                                                            .name);
+                                                                    dataMenuDrink[index]
+                                                                            .order =
+                                                                        document
+                                                                            .order;
+                                                                    _mainHomeCubit
+                                                                        .tangOrder(
+                                                                            dataMenuDrink);
+                                                                  },
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .add_circle,
+                                                                    size: 35,
+                                                                  ),
                                                                 ),
                                                               ],
                                                               mainAxisAlignment:
@@ -271,69 +342,95 @@ class _OrderTablePageState extends State<OrderTablePage> {
                     },
                   ),
                   SizedBox(
-                    height: 90.h,
+                    height: 100.h,
                   ),
                 ],
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 60,
-                margin: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 30.h),
-                padding: EdgeInsets.only(left: 10.w, right: 10.w),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: AppColors.primaryColor),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 5.w,
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text(
-                            '2 mon',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25.sp),
-                          ),
-                          Text(
-                            'Tiger Sugar HongKong, Tra Sua Xoai',
-                            maxLines: 1,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18.sp),
-                            overflow: TextOverflow.ellipsis,
-                          )
-                        ],
-                        mainAxisAlignment: MainAxisAlignment.center,
+            BlocBuilder<MainHomeCubit, MainHomeState>(
+              cubit: _mainHomeCubit,
+              builder: (_, state) {
+                return AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity:
+                      (state.soMon == null || state.soMon == 0) ? 0.0 : 1.0,
+                  child: GestureDetector(
+                    onTap: () {
+                      final listOrder = dataMenuDrink
+                          .where((element) => element.order > 0)
+                          .toList();
+
+                      RoutesTabBottom.instance.navigateTo(
+                          TabItem.main, RouteName.tabConfirmOrder,
+                          arguments: {
+                            'listOrder' : listOrder,
+                            'ban' : widget.id,
+                            'idBan': widget.idBan,
+                          });
+                    },
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: 60,
+                        margin: EdgeInsets.only(
+                            left: 20.w, right: 20.w, bottom: 30.h),
+                        padding: EdgeInsets.only(left: 10.w, right: 10.w),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: AppColors.primaryColor),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 5.w,
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    '${state.soMon ?? 0} món',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 25.sp),
+                                  ),
+                                  Text(
+                                    state.monOrder ?? '',
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18.sp),
+                                    overflow: TextOverflow.ellipsis,
+                                  )
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.center,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 5.w,
+                            ),
+                            Text(
+                              '${formatter.format(state.soTien ?? 0)}',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22.sp),
+                            ),
+                            SizedBox(
+                              width: 5.w,
+                            ),
+                            Icon(
+                              Icons.shopping_bag_rounded,
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 5.w,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      width: 5.w,
-                    ),
-                    Text(
-                      '58.5000',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22.sp),
-                    ),
-                    SizedBox(
-                      width: 5.w,
-                    ),
-                    Icon(
-                      Icons.shopping_bag_rounded,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 5.w,
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             )
           ],
         ),

@@ -1,3 +1,19 @@
-abstract class MainHomeState{}
+abstract class MainHomeState {
+  int soMon;
+  String monOrder;
+  int soTien;
 
-class MainHomeInitialState extends MainHomeState{}
+  MainHomeState({this.soMon, this.monOrder, this.soTien});
+}
+
+class MainHomeInitialState extends MainHomeState {}
+
+class IncrementOrderState extends MainHomeState {
+  IncrementOrderState({String monOrder, int soMon, int soTien})
+      : super(soMon: soMon, soTien: soTien, monOrder: monOrder);
+}
+
+class DecrementOrderState extends MainHomeState {
+  DecrementOrderState({String monOrder, int soMon, int soTien})
+      : super(soMon: soMon, soTien: soTien, monOrder: monOrder);
+}

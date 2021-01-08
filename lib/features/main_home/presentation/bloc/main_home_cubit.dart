@@ -4,6 +4,7 @@ import 'package:cafe_manager_app/common/constants/enum_constants.dart';
 import 'package:cafe_manager_app/common/constants/firebase_collection_constants.dart';
 import 'package:cafe_manager_app/features/main_home/domain/usecases/main_home_usecase.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_state.dart';
+import 'package:cafe_manager_app/features/menu/data/models/menu_type_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,6 +24,50 @@ class MainHomeCubit extends Cubit<MainHomeState> {
 
   Stream<QuerySnapshot> streamListWaiter() {
     return mainHomeUseCase.getStreamListWaiter();
+  }
+
+  void tangOrder(List<MenuDrink> dataMenuDrink) {
+    var soMon = 0;
+    var soTien = 0;
+    var monOrder = '';
+    dataMenuDrink.forEach((element) {
+      if (element.order > 0) {
+        soMon = soMon + 1;
+        soTien = soTien + (int.parse(element.price) * element.order);
+        monOrder = monOrder + '${element.name} x${element.order}, ';
+      }
+    });
+
+    emit(IncrementOrderState(
+      soTien: soTien,
+      soMon: soMon,
+      monOrder: monOrder,
+    ));
+  }
+
+  void resetState(){
+    state.soMon = 0;
+    state.monOrder = '';
+    state.soTien = 0;
+  }
+
+  void giamOrder(List<MenuDrink> dataMenuDrink) {
+    var soMon = 0;
+    var soTien = 0;
+    var monOrder = '';
+    dataMenuDrink.forEach((element) {
+      if (element.order > 0) {
+        soMon = soMon + 1;
+        soTien = soTien + (int.parse(element.price) * element.order);
+        monOrder = monOrder + '${element.name} x${element.order}';
+      }
+    });
+
+    emit(DecrementOrderState(
+      soTien: soTien,
+      soMon: soMon,
+      monOrder: monOrder,
+    ));
   }
 
   Future<void> createUserChef(
@@ -79,14 +124,14 @@ class MainHomeCubit extends Cubit<MainHomeState> {
 
   Future<void> createUserWaiter(
       {String userLogin,
-        String password,
-        String firstName,
-        String lastName,
-        String email,
-        String dateOfBirth,
-        Gender gender,
-        String phone,
-        String address}) async {
+      String password,
+      String firstName,
+      String lastName,
+      String email,
+      String dateOfBirth,
+      Gender gender,
+      String phone,
+      String address}) async {
     loadingCubit.showLoading(true);
     if (userLogin.isEmpty &&
         password.isEmpty &&
