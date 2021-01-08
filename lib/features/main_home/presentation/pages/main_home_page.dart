@@ -60,6 +60,9 @@ class _MainHomePageState extends State<MainHomePage> {
                   children: [
                     Expanded(
                       child: CardHome(
+                        onTap: (){
+                          RoutesTabBottom.instance.navigateTo(TabItem.main, RouteName.tabOrder);
+                        },
                         label: 'Danh sách order',
                         icon: IconConstants.order,
                       ),
@@ -69,6 +72,9 @@ class _MainHomePageState extends State<MainHomePage> {
                     ),
                     Expanded(
                       child: CardHome(
+                        onTap: (){
+                          RoutesTabBottom.instance.navigateTo(TabItem.main, RouteName.tabTable);
+                        },
                         label: 'Danh sách bàn',
                         icon: IconConstants.table,
                       ),

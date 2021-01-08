@@ -5,4 +5,5 @@ class IconConstants{
   static const String order = '${path}order.svg';
   static const String table = '${path}table.svg';
   static const String gender = '${path}gender.svg';
+  static const String tableOrder = '${path}table_order.svg';
 }

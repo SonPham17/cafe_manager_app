@@ -7,5 +7,8 @@ class RouteName{
   static const String tabHomeWaiter = 'waiter';
   static const String tabEditProfile = 'edit_profile';
   static const String createChef = 'create_chef';
+  static const String tabTable = 'table';
+  static const String tabOrder = 'order';
+  static const String tabOrderTable = 'order_table';
 
 }

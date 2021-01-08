@@ -5,6 +5,9 @@ import 'package:cafe_manager_app/features/main_home/presentation/pages/chef_page
 import 'package:cafe_manager_app/features/main_home/presentation/pages/create_user_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/edit_profile_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/main_home_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/order_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/order_table_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/table_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/waiter_page.dart';
 import 'package:cafe_manager_app/features/menu/presentation/pages/menu_page.dart';
 import 'package:cafe_manager_app/features/setting/presentation/pages/setting_page.dart';
@@ -59,9 +62,24 @@ class RoutesTabBottom {
       case RouteName.tabHomeWaiter:
         return FadeInRoute(widget: WaiterPage());
         break;
+      case RouteName.tabTable:
+        return FadeInRoute(widget: TablePage());
+        break;
+      case RouteName.tabOrder:
+        return FadeInRoute(widget: OrderPage());
+        break;
+      case RouteName.tabOrderTable:
+        return FadeInRoute(
+            widget: OrderTablePage(
+          id: settings.arguments as String,
+        ));
+        break;
       case RouteName.createChef:
         final type = settings.arguments as String;
-        return FadeInRoute(widget: CreateUserPage(type: type,));
+        return FadeInRoute(
+            widget: CreateUserPage(
+          type: type,
+        ));
         break;
       case RouteName.tabEditProfile:
         final params = settings.arguments as Map<String, dynamic>;
