@@ -172,6 +172,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
                     await orders.add({
                       'tongTien': tong,
                       'ban': widget.ban,
+                      'idBan' : widget.idBan,
                       'idMon': idMon,
                       'soLuongMon': soLuongMon,
                       'idTypeMon' : idTypeMon,

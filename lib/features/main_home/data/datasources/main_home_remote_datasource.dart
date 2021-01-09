@@ -1,5 +1,4 @@
 import 'package:cafe_manager_app/common/constants/firebase_collection_constants.dart';
-import 'package:cafe_manager_app/features/main_home/data/models/chef_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MainHomeRemoteDataSource {
@@ -18,6 +17,7 @@ class MainHomeRemoteDataSource {
   }
 
   Future<bool> addNewChef(
+      String image,
       String userLogin,
       String password,
       String firstName,
@@ -35,6 +35,7 @@ class MainHomeRemoteDataSource {
     if (checkIsExist.docs.isEmpty) {
       return chefs
           .add({
+            'image': image,
             'userLogin': userLogin,
             'password': password,
             'firstName': firstName,
@@ -53,6 +54,7 @@ class MainHomeRemoteDataSource {
   }
 
   Future<bool> addNewWaiter(
+      String image,
       String userLogin,
       String password,
       String firstName,
@@ -70,6 +72,7 @@ class MainHomeRemoteDataSource {
     if (checkIsExist.docs.isEmpty) {
       return chefs
           .add({
+        'image' : image,
         'userLogin': userLogin,
         'password': password,
         'firstName': firstName,

@@ -32,6 +32,11 @@ class UserManager {
     return userLoginModel.loginType;
   }
 
+  Future<void> logOut() async {
+    _prefs = await SharedPreferences.getInstance();
+    await _prefs.setString('user_info', null);
+  }
+
   Future<void> saveUserLogin(UserLoginModel userLoginModel) async {
     this.userLoginModel = userLoginModel;
     _prefs = await SharedPreferences.getInstance();

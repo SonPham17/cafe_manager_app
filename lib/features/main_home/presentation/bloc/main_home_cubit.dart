@@ -1,12 +1,16 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:cafe_manager_app/common/blocs/loading/loading_cubit.dart';
 import 'package:cafe_manager_app/common/blocs/snackbar/snackbar_cubit.dart';
 import 'package:cafe_manager_app/common/constants/enum_constants.dart';
-import 'package:cafe_manager_app/common/constants/firebase_collection_constants.dart';
 import 'package:cafe_manager_app/features/main_home/domain/usecases/main_home_usecase.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_state.dart';
 import 'package:cafe_manager_app/features/menu/data/models/menu_type_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path/path.dart';
 
 class MainHomeCubit extends Cubit<MainHomeState> {
   MainHomeUseCase mainHomeUseCase;
@@ -41,7 +45,7 @@ class MainHomeCubit extends Cubit<MainHomeState> {
     emit(IncrementOrderState(
       soTien: soTien,
       soMon: soMon,
-      monOrder: monOrder,
+      monOrder: monOrder.substring(0, monOrder.length - 2),
     ));
   }
 
@@ -70,8 +74,16 @@ class MainHomeCubit extends Cubit<MainHomeState> {
     ));
   }
 
+  static const _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  static final Random _rnd = Random();
+
+  String _rdStr(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
   Future<void> createUserChef(
       {String userLogin,
+      File image,
       String password,
       String firstName,
       String lastName,
@@ -99,12 +111,28 @@ class MainHomeCubit extends Cubit<MainHomeState> {
         case Gender.female:
           gioiTinh = 'Nu';
           break;
+      }
+
+      var linkPath;
+      if (image != null) {
+        String fileName = basename(image.path);
+        Reference firebaseStorageRef = FirebaseStorage
+            .instance
+            .ref()
+            .child('uploads/${_rdStr(15)}');
+        UploadTask uploadTask =
+        firebaseStorageRef.putFile(image);
+        TaskSnapshot taskSnapshot = await uploadTask;
+
+        linkPath =
+        await taskSnapshot.ref.getDownloadURL();
       }
 
       final isSuccess = await mainHomeUseCase.addNewChef(
           userLogin: userLogin,
           password: password,
           firstName: firstName,
+          image: linkPath,
           lastName: lastName,
           email: email,
           dateOfBirth: dateOfBirth,
@@ -113,18 +141,20 @@ class MainHomeCubit extends Cubit<MainHomeState> {
           address: address);
 
       if (isSuccess) {
-        snackBarCubit.showSnackBar('Tao dau bep moi thanh cong!');
+        emit(AddSuccessState());
+        snackBarCubit.showSnackBar('Tạo đầu bếp mới thành công!');
       } else {
+        emit(AddFailedState());
         snackBarCubit.showSnackBar('Tên tài khoản đã tồn tại!');
       }
-
-      loadingCubit.showLoading(false);
     }
+    loadingCubit.showLoading(false);
   }
 
   Future<void> createUserWaiter(
       {String userLogin,
       String password,
+      File image,
       String firstName,
       String lastName,
       String email,
@@ -153,8 +183,24 @@ class MainHomeCubit extends Cubit<MainHomeState> {
           break;
       }
 
+      var linkPath;
+      if (image != null) {
+        String fileName = basename(image.path);
+        Reference firebaseStorageRef = FirebaseStorage
+            .instance
+            .ref()
+            .child('uploads/${_rdStr(15)}');
+        UploadTask uploadTask =
+        firebaseStorageRef.putFile(image);
+        TaskSnapshot taskSnapshot = await uploadTask;
+
+        linkPath =
+        await taskSnapshot.ref.getDownloadURL();
+      }
+
       final isSuccess = await mainHomeUseCase.addNewWaiter(
           userLogin: userLogin,
+          image: linkPath,
           password: password,
           firstName: firstName,
           lastName: lastName,
@@ -174,17 +220,16 @@ class MainHomeCubit extends Cubit<MainHomeState> {
     }
   }
 
-  Future<void> updateUser(
-      {String password,
-      String firstName,
-      String lastName,
-      String email,
-      String dateOfBirth,
-      Gender gender,
-      String phone,
-      String address,
-      String id,
-      String typeEdit}) async {
+  Future<void> updateUser({String password,
+    String firstName,
+    String lastName,
+    String email,
+    String dateOfBirth,
+    Gender gender,
+    String phone,
+    String address,
+    String id,
+    String typeEdit}) async {
     loadingCubit.showLoading(true);
     if (password.isEmpty &&
         firstName.isEmpty &&

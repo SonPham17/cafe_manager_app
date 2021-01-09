@@ -56,229 +56,254 @@ class _MenuPageState extends State<MenuPage>
         body: Stack(
           children: [
             Image.asset(ImageConstants.backgroundAppbar),
-            StreamBuilder<QuerySnapshot>(
-              stream: _menuCubit.streamListTypeMenu(),
-              builder: (_, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Something went wrong',
-                      style: TextStyle(fontSize: 30.sp),
-                    ),
-                  );
-                }
+            Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppColors.primaryColor,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  margin: EdgeInsets.only(top: 130.h,bottom: 10.h),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.restaurant_menu),
+                      Text(
+                        'Menu',
+                        style: TextStyle(fontSize: 30.sp),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: _menuCubit.streamListTypeMenu(),
+                    builder: (_, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            'Something went wrong',
+                            style: TextStyle(fontSize: 30.sp),
+                          ),
+                        );
+                      }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: Container(
-                      child: Lottie.asset('assets/gifs/loading_gif.json',
-                          width: 80, height: 80),
-                    ),
-                  );
-                }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: Container(
+                            child: Lottie.asset('assets/gifs/loading_gif.json',
+                                width: 80, height: 80),
+                          ),
+                        );
+                      }
 
-                if (snapshot.data.docs.isEmpty) {
-                  return Center(
-                    child: Text('Dữ liệu đang trống!'),
-                  );
-                }
+                      if (snapshot.data.docs.isEmpty) {
+                        return Center(
+                          child: Text('Dữ liệu đang trống!'),
+                        );
+                      }
 
-                final data = snapshot.data.docs;
-                listType.clear();
-                listIdType.clear();
-                data.forEach((element) {
-                  listType.add(element.data()['type']);
-                  listIdType.add(element.data()['id']);
-                });
-                return ListView(
-                  children: <Widget>[
-                    Column(
-                      children: data.map((item) {
-                        return StreamBuilder<QuerySnapshot>(
-                          builder: (_, snapshot) {
-                            if (snapshot.hasError) {
-                              return CustomExpandableListView(
-                                header: _header('${item.data()['type']}'),
-                                items: [
-                                  Text(
-                                    'Something went wrong',
-                                    style: TextStyle(fontSize: 30.sp),
-                                  )
-                                ],
-                                headerEdgeInsets:
-                                    EdgeInsets.only(left: 16.0, right: 16.0),
-                              );
-                            }
+                      final data = snapshot.data.docs;
+                      listType.clear();
+                      listIdType.clear();
+                      data.forEach((element) {
+                        listType.add(element.data()['type']);
+                        listIdType.add(element.data()['id']);
+                      });
+                      return ListView(
+                        children: <Widget>[
+                          Column(
+                            children: data.map((item) {
+                              return StreamBuilder<QuerySnapshot>(
+                                builder: (_, snapshot) {
+                                  if (snapshot.hasError) {
+                                    return CustomExpandableListView(
+                                      header: _header('${item.data()['type']}'),
+                                      items: [
+                                        Text(
+                                          'Something went wrong',
+                                          style: TextStyle(fontSize: 30.sp),
+                                        )
+                                      ],
+                                      headerEdgeInsets:
+                                          EdgeInsets.only(left: 16.0, right: 16.0),
+                                    );
+                                  }
 
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CustomExpandableListView(
-                                header: _header('${item.data()['type']}'),
-                                items: [
-                                  Center(
-                                    child: Container(
-                                      child: Lottie.asset(
-                                          'assets/gifs/loading_gif.json',
-                                          width: 80,
-                                          height: 80),
-                                    ),
-                                  )
-                                ],
-                                headerEdgeInsets:
-                                    EdgeInsets.only(left: 16.0, right: 16.0),
-                              );
-                            }
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CustomExpandableListView(
+                                      header: _header('${item.data()['type']}'),
+                                      items: [
+                                        Center(
+                                          child: Container(
+                                            child: Lottie.asset(
+                                                'assets/gifs/loading_gif.json',
+                                                width: 80,
+                                                height: 80),
+                                          ),
+                                        )
+                                      ],
+                                      headerEdgeInsets:
+                                          EdgeInsets.only(left: 16.0, right: 16.0),
+                                    );
+                                  }
 
-                            if (snapshot.data.docs.isEmpty) {
-                              return CustomExpandableListView(
-                                header: _header('${item.data()['type']}'),
-                                items: [
-                                  Container(
-                                    child: Center(
-                                      child: Text('Dữ liệu đang trống!'),
-                                    ),
-                                    height: 50,
-                                  )
-                                ],
-                                headerEdgeInsets:
-                                    EdgeInsets.only(left: 16.0, right: 16.0),
-                              );
-                            }
+                                  if (snapshot.data.docs.isEmpty) {
+                                    return CustomExpandableListView(
+                                      header: _header('${item.data()['type']}'),
+                                      items: [
+                                        Container(
+                                          child: Center(
+                                            child: Text('Dữ liệu đang trống!'),
+                                          ),
+                                          height: 50,
+                                        )
+                                      ],
+                                      headerEdgeInsets:
+                                          EdgeInsets.only(left: 16.0, right: 16.0),
+                                    );
+                                  }
 
-                            return CustomExpandableListView(
-                              header: _header('${item.data()['type']}'),
-                              items: snapshot.data.docs
-                                  .map((document) => Container(
-                                        margin: EdgeInsets.only(
-                                            left: 10.w,
-                                            right: 10.w,
-                                            top: 5.h,
-                                            bottom: 5.h),
-                                        height: 100,
-                                        child: Slidable(
-                                          actionPane:
-                                              SlidableDrawerActionPane(),
-                                          actionExtentRatio: 0.25,
-                                          secondaryActions: [
-                                            IconSlideAction(
-                                              caption: 'Sửa',
-                                              color: Colors.black45,
-                                              icon: Icons.more_horiz,
-                                              onTap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (_) =>
-                                                      DialogEditDrink(
-                                                    typeMenu: item
-                                                        .data()['id']
-                                                        .toString(),
-                                                    id: document.id,
-                                                    urlImage: document
-                                                        .data()['image'],
-                                                        name: document
-                                                            .data()['name'],
-                                                        price: document
-                                                            .data()['price'].toString(),
+                                  return CustomExpandableListView(
+                                    header: _header('${item.data()['type']}'),
+                                    items: snapshot.data.docs
+                                        .map((document) => Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 10.w,
+                                                  right: 10.w,
+                                                  top: 5.h,
+                                                  bottom: 5.h),
+                                              height: 100,
+                                              child: Slidable(
+                                                actionPane:
+                                                    SlidableDrawerActionPane(),
+                                                actionExtentRatio: 0.25,
+                                                secondaryActions: [
+                                                  IconSlideAction(
+                                                    caption: 'Sửa',
+                                                    color: Colors.black45,
+                                                    icon: Icons.more_horiz,
+                                                    onTap: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (_) =>
+                                                            DialogEditDrink(
+                                                          typeMenu: item
+                                                              .data()['id']
+                                                              .toString(),
+                                                          id: document.id,
+                                                          urlImage: document
+                                                              .data()['image'],
+                                                              name: document
+                                                                  .data()['name'],
+                                                              price: document
+                                                                  .data()['price'].toString(),
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
-                                                );
-                                              },
-                                            ),
-                                            IconSlideAction(
-                                              caption: 'Xoá',
-                                              color: Colors.red,
-                                              icon: Icons.delete,
-                                              onTap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (_) => DialogDeleteMenu(
-                                                      id: document.id,
-                                                      typeMenu: item
-                                                          .data()['id']
-                                                          .toString(),
-                                                      i18nLocalizationContent:
-                                                          'Bạn có muốn xoá thông tin mặt hàng này không ?',
-                                                      i18nLocalizationConfirmText:
-                                                          'Đồng ý',
-                                                      i18nLocalizationCancelText:
-                                                          'Huỷ',
-                                                      i18nLocalizationTitle:
-                                                          'Xoá món trong menu'),
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    image: DecorationImage(
-                                                        image: document.data()[
-                                                                    'image'] !=
-                                                                null
-                                                            ? NetworkImage(
-                                                                document.data()[
-                                                                    'image'])
-                                                            : AssetImage(
-                                                                ImageConstants
-                                                                    .cafeSplash),
-                                                        fit: BoxFit.cover)),
-                                                width: 100,
-                                                height: 100,
-                                                margin: EdgeInsets.only(
-                                                    right: 10.w),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 5.h, bottom: 5.h),
-                                                child: Column(
+                                                  IconSlideAction(
+                                                    caption: 'Xoá',
+                                                    color: Colors.red,
+                                                    icon: Icons.delete,
+                                                    onTap: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (_) => DialogDeleteMenu(
+                                                            id: document.id,
+                                                            typeMenu: item
+                                                                .data()['id']
+                                                                .toString(),
+                                                            i18nLocalizationContent:
+                                                                'Bạn có muốn xoá thông tin mặt hàng này không ?',
+                                                            i18nLocalizationConfirmText:
+                                                                'Đồng ý',
+                                                            i18nLocalizationCancelText:
+                                                                'Huỷ',
+                                                            i18nLocalizationTitle:
+                                                                'Xoá món trong menu'),
+                                                      );
+                                                    },
+                                                  ),
+                                                ],
+                                                child: Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
                                                   children: [
-                                                    Text(
-                                                      document.data()['name'],
-                                                      style: TextStyle(
-                                                          fontSize: 25.sp),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                    Container(
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  10),
+                                                          image: DecorationImage(
+                                                              image: document.data()[
+                                                                          'image'] !=
+                                                                      null
+                                                                  ? NetworkImage(
+                                                                      document.data()[
+                                                                          'image'])
+                                                                  : AssetImage(
+                                                                      ImageConstants
+                                                                          .cafeSplash),
+                                                              fit: BoxFit.cover)),
+                                                      width: 100,
+                                                      height: 100,
+                                                      margin: EdgeInsets.only(
+                                                          right: 10.w),
                                                     ),
-                                                    Text(
-                                                      '${formatter.format(int.parse(document.data()['price']))} đồng',
-                                                      style: TextStyle(
-                                                          fontSize: 20.sp),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          top: 5.h, bottom: 5.h),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment.start,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            document.data()['name'],
+                                                            style: TextStyle(
+                                                                fontSize: 25.sp),
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow.ellipsis,
+                                                          ),
+                                                          Text(
+                                                            '${formatter.format(int.parse(document.data()['price']))} đồng',
+                                                            style: TextStyle(
+                                                                fontSize: 20.sp),
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow.ellipsis,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              headerEdgeInsets:
-                                  EdgeInsets.only(left: 16.0, right: 16.0),
-                            );
-                          },
-                          stream: FirebaseFirestore.instance
-                              .collection('${item.data()['id']}')
-                              .snapshots(),
-                        );
-                      }).toList(),
-                    )
-                  ],
-                );
-              },
+                                            ))
+                                        .toList(),
+                                    headerEdgeInsets:
+                                        EdgeInsets.only(left: 16.0, right: 16.0),
+                                  );
+                                },
+                                stream: FirebaseFirestore.instance
+                                    .collection('${item.data()['id']}')
+                                    .snapshots(),
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -1,14 +1,15 @@
-import 'package:cafe_manager_app/common/blocs/loading/loading_cubit.dart';
+import 'package:cafe_manager_app/common/constants/enum_constants.dart';
 import 'package:cafe_manager_app/common/constants/font_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
-import 'package:cafe_manager_app/common/injector/injector.dart';
+import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
+import 'package:cafe_manager_app/common/widgets/dialog_confirm_done_order.dart';
 import 'package:cafe_manager_app/features/main_home/data/models/order_model.dart';
+import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 
 class DetailOrderPage extends StatefulWidget {
   final OrderModel orderModel;
@@ -155,10 +156,13 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                 minWidth: 230.w,
                 child: RaisedButton(
                   onPressed: () async {
-                    Injector.resolve<LoadingCubit>().showLoading(true);
+                    await showDialog(
+                        context: context,
+                        builder: (_) => DialogConfirmDoneOrder(
+                              orderModel: widget.orderModel,
+                            ));
 
-                    Injector.resolve<LoadingCubit>().showLoading(false);
-                    // RoutesTabBottom.instance.popUntil(TabItem.main);mainΩ
+                    RoutesTabBottom.instance.popUntil(TabItem.main);
                   },
                   color: AppColors.primaryColor,
                   padding: EdgeInsets.only(top: 10, bottom: 10),

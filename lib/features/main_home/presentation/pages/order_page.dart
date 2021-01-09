@@ -26,7 +26,6 @@ class _OrderPageState extends State<OrderPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Danh sách order'),
-        actions: [IconButton(icon: Icon(Icons.add_circle), onPressed: () {})],
       ),
       body: Container(
         margin: EdgeInsets.only(top: 10.h, bottom: 10.h),
@@ -64,7 +63,7 @@ class _OrderPageState extends State<OrderPage> {
 
             final data = snapshot.data.docs;
             final listData =
-                data.map((e) => OrderModel.fromJson(e.data())).toList();
+                data.map((e) => OrderModel.fromJson(e.data(),e.id)).toList();
             return ListView.separated(
                 itemBuilder: (_, index) {
                   return GestureDetector(

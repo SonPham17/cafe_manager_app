@@ -10,11 +10,13 @@ class ItemListModel extends StatelessWidget {
   final String phone;
   final String image;
   final String address;
+  final String type;
 
   ItemListModel({
     this.name,
     this.login,
     this.age,
+    this.type,
     this.phone,
     this.image,
     this.address,
@@ -37,16 +39,28 @@ class ItemListModel extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 80.w,
-              height: 80.h,
+              width: 90,
+              height: 90,
               margin: EdgeInsets.only(right: 20.w),
               padding: const EdgeInsets.all(3),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: CircleAvatar(
-                backgroundImage: AssetImage(image),
+              child: ClipOval(
+                child: image == null
+                    ? Image.asset(
+                  type == 'chef' ? ImageConstants.cooking : ImageConstants.waiter,
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.cover,
+                )
+                    : Image.network(
+                  image,
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             Expanded(

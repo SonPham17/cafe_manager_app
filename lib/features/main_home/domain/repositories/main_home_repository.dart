@@ -6,7 +6,8 @@ abstract class MainHomeRepository {
   Stream<QuerySnapshot> getStreamListWaiter();
 
   Future<bool> addNewChef(
-      String userLogin,
+    String image,
+    String userLogin,
     String password,
     String firstName,
     String lastName,
@@ -18,16 +19,17 @@ abstract class MainHomeRepository {
   );
 
   Future<bool> addNewWaiter(
-      String userLogin,
-      String password,
-      String firstName,
-      String lastName,
-      String email,
-      String dateOfBirth,
-      String gender,
-      String phone,
-      String address,
-      );
+    String image,
+    String userLogin,
+    String password,
+    String firstName,
+    String lastName,
+    String email,
+    String dateOfBirth,
+    String gender,
+    String phone,
+    String address,
+  );
 
   Future<bool> deleteChef(String id);
   Future<bool> deleteWaiter(String id);

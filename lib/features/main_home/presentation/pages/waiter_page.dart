@@ -2,21 +2,17 @@ import 'dart:ui';
 
 import 'package:cafe_manager_app/common/constants/enum_constants.dart';
 import 'package:cafe_manager_app/common/constants/firebase_collection_constants.dart';
-import 'package:cafe_manager_app/common/constants/icon_constants.dart';
-import 'package:cafe_manager_app/common/constants/image_constants.dart';
+import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
 import 'package:cafe_manager_app/common/manager/user_manager.dart';
 import 'package:cafe_manager_app/common/navigation/route_name.dart';
-import 'package:cafe_manager_app/common/utils/screen_utils.dart';
 import 'package:cafe_manager_app/common/widgets/dialog_question.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/widgets/item_list_model_widget.dart';
 import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 
 class WaiterPage extends StatefulWidget {
@@ -100,6 +96,7 @@ class _WaiterPageState extends State<WaiterPage> {
                                   arguments: {
                                     'type': FirebaseCollectionConstants.waiter,
                                     'id': document.id,
+                                    'image': document.data()['image'],
                                     'address': document.data()['address'],
                                     'dateOfBirth':
                                         document.data()['dateOfBirth'],
@@ -133,9 +130,10 @@ class _WaiterPageState extends State<WaiterPage> {
                           ),
                         ],
                         child: ItemListModel(
+                          type: 'waiter',
                           name:
                               '${document.data()['firstName']} ${document.data()['lastName']}',
-                          image: ImageConstants.waiter,
+                          image: document.data()['image'],
                           login: document.data()['userLogin'],
                           age: document.data()['dateOfBirth'],
                           phone: document.data()['phone'],

@@ -19,6 +19,7 @@ class MainHomeRepositoryImpl extends MainHomeRepository {
 
   @override
   Future<bool> addNewChef(
+      String image,
       String userLogin,
       String password,
       String firstName,
@@ -28,7 +29,7 @@ class MainHomeRepositoryImpl extends MainHomeRepository {
       String gender,
       String phone,
       String address) {
-    return mainHomeRemoteDataSource.addNewChef(userLogin, password, firstName,
+    return mainHomeRemoteDataSource.addNewChef(image,userLogin, password, firstName,
         lastName, email, dateOfBirth, gender, phone, address);
   }
 
@@ -43,8 +44,8 @@ class MainHomeRepositoryImpl extends MainHomeRepository {
   }
 
   @override
-  Future<bool> addNewWaiter(String userLogin, String password, String firstName, String lastName, String email, String dateOfBirth, String gender, String phone, String address) {
-    return mainHomeRemoteDataSource.addNewWaiter(userLogin, password, firstName,
+  Future<bool> addNewWaiter(String image,String userLogin, String password, String firstName, String lastName, String email, String dateOfBirth, String gender, String phone, String address) {
+    return mainHomeRemoteDataSource.addNewWaiter(image,userLogin, password, firstName,
         lastName, email, dateOfBirth, gender, phone, address);
   }
 }

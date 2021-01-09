@@ -1,15 +1,20 @@
+import 'dart:io';
+
 import 'package:cafe_manager_app/common/constants/enum_constants.dart';
 import 'package:cafe_manager_app/common/constants/font_constants.dart';
 import 'package:cafe_manager_app/common/constants/icon_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/constants/string_constants.dart';
+import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_translate/global.dart';
-import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateUserPage extends StatefulWidget {
   final String type;
@@ -25,6 +30,9 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   Gender _genderType = Gender.male;
   DateTime selectedDate = DateTime.now();
+
+  File _image;
+  final picker = ImagePicker();
 
   TextEditingController _controllerUserLogin;
   TextEditingController _controllerPassword;
@@ -65,21 +73,40 @@ class _CreateUserPageState extends State<CreateUserPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
-                width: 200.w,
-                margin: EdgeInsets.only(top: 20.h),
-                height: 200.h,
-                padding: const EdgeInsets.all(3),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage(ImageConstants.avatarDemo),
+              SizedBox(
+                height: 20.h,
+              ),
+              GestureDetector(
+                onTap: () async {
+                  final pickedFile =
+                      await picker.getImage(source: ImageSource.gallery);
+
+                  setState(() {
+                    if (pickedFile != null) {
+                      _image = File(pickedFile.path);
+                    } else {
+                      print('No image selected.');
+                    }
+                  });
+                },
+                child: ClipOval(
+                  child: _image == null
+                      ? Image.asset(
+                          ImageConstants.avatarDemo,
+                          height: 150,
+                          width: 150,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.file(
+                          _image,
+                          height: 150,
+                          width: 150,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 20.w, right: 20.w),
+                margin: EdgeInsets.only(left: 20.w, right: 20.w, top: 10.h),
                 child: Column(
                   children: [
                     Row(
@@ -289,7 +316,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                           border: OutlineInputBorder(
                               gapPadding: 0,
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(6)),
+                              BorderRadius.all(Radius.circular(6)),
                               borderSide: BorderSide(
                                 width: 10,
                               )),
@@ -436,47 +463,55 @@ class _CreateUserPageState extends State<CreateUserPage> {
               SizedBox(
                 height: 20.h,
               ),
-              ButtonTheme(
-                minWidth: 180.w,
-                height: 60.h,
-                child: RaisedButton(
-                  onPressed: () async {
-                    if(widget.type == 'chef'){
-                      await _mainHomeCubit.createUserChef(
-                        userLogin: _controllerUserLogin.text.trim(),
-                        password: _controllerPassword.text,
-                        firstName: _controllerFirstName.text.trim(),
-                        email: _controllerEmail.text.trim(),
-                        lastName: _controllerLastName.text.trim(),
-                        dateOfBirth: _controllerDateOfBirth.text.trim(),
-                        gender: _genderType,
-                        phone: _controllerPhone.text.trim(),
-                        address: _controllerAddress.text.trim(),
-                      );
-                    }else{
-                      await _mainHomeCubit.createUserWaiter(
-                        userLogin: _controllerUserLogin.text.trim(),
-                        password: _controllerPassword.text,
-                        firstName: _controllerFirstName.text.trim(),
-                        email: _controllerEmail.text.trim(),
-                        lastName: _controllerLastName.text.trim(),
-                        dateOfBirth: _controllerDateOfBirth.text.trim(),
-                        gender: _genderType,
-                        phone: _controllerPhone.text.trim(),
-                        address: _controllerAddress.text.trim(),
-                      );
-                    }
-
+              BlocListener<MainHomeCubit, MainHomeState>(
+                cubit: _mainHomeCubit,
+                listener: (_, state) {
+                  if (state is AddSuccessState) {
                     Navigator.of(context).pop();
-                  },
-                  color: AppColors.primaryColor,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(50)),
-                  child: Text('Tạo',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: FontConstants.montserratRegular,
-                          fontSize: 27.sp)),
+                  }
+                },
+                child: ButtonTheme(
+                  minWidth: 180.w,
+                  height: 60.h,
+                  child: RaisedButton(
+                    onPressed: () async {
+                      if (widget.type == 'chef') {
+                        await _mainHomeCubit.createUserChef(
+                          image: _image,
+                          userLogin: _controllerUserLogin.text.trim(),
+                          password: _controllerPassword.text,
+                          firstName: _controllerFirstName.text.trim(),
+                          email: _controllerEmail.text.trim(),
+                          lastName: _controllerLastName.text.trim(),
+                          dateOfBirth: _controllerDateOfBirth.text.trim(),
+                          gender: _genderType,
+                          phone: _controllerPhone.text.trim(),
+                          address: _controllerAddress.text.trim(),
+                        );
+                      } else {
+                        await _mainHomeCubit.createUserWaiter(
+                          image: _image,
+                          userLogin: _controllerUserLogin.text.trim(),
+                          password: _controllerPassword.text,
+                          firstName: _controllerFirstName.text.trim(),
+                          email: _controllerEmail.text.trim(),
+                          lastName: _controllerLastName.text.trim(),
+                          dateOfBirth: _controllerDateOfBirth.text.trim(),
+                          gender: _genderType,
+                          phone: _controllerPhone.text.trim(),
+                          address: _controllerAddress.text.trim(),
+                        );
+                      }
+                    },
+                    color: AppColors.primaryColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(50)),
+                    child: Text('Tạo',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: FontConstants.montserratRegular,
+                            fontSize: 27.sp)),
+                  ),
                 ),
               ),
               SizedBox(
@@ -493,8 +528,8 @@ class _CreateUserPageState extends State<CreateUserPage> {
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        firstDate: DateTime(1990, 8),
+        lastDate: DateTime(2100));
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;

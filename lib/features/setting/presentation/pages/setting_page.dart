@@ -1,5 +1,12 @@
+import 'package:cafe_manager_app/common/constants/font_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
-import 'package:expandable_group/expandable_group_widget.dart';
+import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
+import 'package:cafe_manager_app/common/manager/user_manager.dart';
+import 'package:cafe_manager_app/common/navigation/route_name.dart';
+import 'package:cafe_manager_app/common/themes/app_colors.dart';
+import 'package:cafe_manager_app/features/authentication/login/presentation/pages/login_page.dart';
+import 'package:cafe_manager_app/features/routes.dart';
+import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatefulWidget {
@@ -8,49 +15,106 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  List<List<String>> _generateData() {
-    int numberOfGroups = 5;
-    List<List<String>> results = List<List<String>>();
-    for (int i = 0; i < numberOfGroups; i++) {
-      List<String> items = List<String>();
-      for (int j = 0; j < numberOfGroups * 5 + i; j++) {
-        items.add("Item $j in group $i");
-      }
-      results.add(items);
-    }
-    return results;
-  }
+  final userLogin = UserManager.instance.userLoginModel;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          Column(
-            children: _generateData().map((group) {
-              int index = _generateData().indexOf(group);
-              return ExpandableGroup(
-                isExpanded: index == 0,
-                header: _header('Group $index'),
-                items: _buildItems(context, group),
-                headerEdgeInsets: EdgeInsets.only(left: 16.0, right: 16.0),
-              );
-            }).toList(),
+      body: Stack(
+        children: [
+          Image.asset(ImageConstants.backgroundAppbar),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 110.h,
+                ),
+                Center(
+                  child: ClipOval(
+                    child: UserManager.instance.userLoginModel.image == null
+                        ? Image.asset(
+                            ImageConstants.avatarDemo,
+                            height: 150,
+                            width: 150,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.network(
+                            UserManager.instance.userLoginModel.image,
+                            height: 150,
+                            width: 150,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                ),
+                Container(
+                  child: Text(
+                    'Họ và tên: ${userLogin.firstName} ${userLogin.lastName}',
+                    style: TextStyle(fontSize: 25.sp),
+                  ),
+                  margin: EdgeInsets.all(5),
+                ),
+                Container(
+                  child: Text(
+                    'Ngày sinh: ${userLogin.dateOfBirth}',
+                    style: TextStyle(fontSize: 25.sp),
+                  ),
+                  margin: EdgeInsets.all(5),
+                ),
+                Container(
+                  child: Text(
+                    'Email: ${userLogin.email}',
+                    style: TextStyle(fontSize: 25.sp),
+                  ),
+                  margin: EdgeInsets.all(5),
+                ),
+                Container(
+                  child: Text(
+                    'Giới tính: ${userLogin.gender}',
+                    style: TextStyle(fontSize: 25.sp),
+                  ),
+                  margin: EdgeInsets.all(5),
+                ),
+                Container(
+                  child: Text(
+                    'SĐT: ${userLogin.phone}',
+                    style: TextStyle(fontSize: 25.sp),
+                  ),
+                  margin: EdgeInsets.all(5),
+                ),
+                Container(
+                  child: Text(
+                    'Địa chỉ: ${userLogin.address}',
+                    style: TextStyle(fontSize: 25.sp),
+                  ),
+                  margin: EdgeInsets.all(5),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 50),
+                  child: ButtonTheme(
+                    minWidth: 230.w,
+                    child: RaisedButton(
+                      onPressed: () async {
+                        await UserManager.instance.logOut();
+                        Routes.instance.navigateAndRemove(RouteName.login);
+                      },
+                      color: AppColors.primaryColor,
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(50)),
+                      child: Text('Đăng xuất',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: FontConstants.montserratBold,
+                              fontSize: 23.sp)),
+                    ),
+                  ),
+                )
+              ],
+            ),
           )
         ],
       ),
     );
   }
 
-  Widget _header(String name) => Text(name,
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-      ));
-
-  List<ListTile> _buildItems(BuildContext context, List<String> items) => items
-      .map((e) => ListTile(
-            title: Text(e),
-          ))
-      .toList();
 }

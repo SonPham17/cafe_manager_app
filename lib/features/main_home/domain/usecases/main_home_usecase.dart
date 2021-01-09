@@ -18,28 +18,30 @@ class MainHomeUseCase {
       {String userLogin,
       String password,
       String firstName,
+      String image,
       String lastName,
       String email,
       String dateOfBirth,
       String gender,
       String phone,
       String address}) {
-    return mainHomeRepository.addNewChef(userLogin, password, firstName,
+    return mainHomeRepository.addNewChef(image, userLogin, password, firstName,
         lastName, email, dateOfBirth, gender, phone, address);
   }
 
   Future<bool> addNewWaiter(
       {String userLogin,
-        String password,
-        String firstName,
-        String lastName,
-        String email,
-        String dateOfBirth,
-        String gender,
-        String phone,
-        String address}) {
-    return mainHomeRepository.addNewWaiter(userLogin, password, firstName,
-        lastName, email, dateOfBirth, gender, phone, address);
+      String image,
+      String password,
+      String firstName,
+      String lastName,
+      String email,
+      String dateOfBirth,
+      String gender,
+      String phone,
+      String address}) {
+    return mainHomeRepository.addNewWaiter(image, userLogin, password,
+        firstName, lastName, email, dateOfBirth, gender, phone, address);
   }
 
   Future<bool> deleteChef(String id) {

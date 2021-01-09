@@ -10,7 +10,7 @@ class LoginRemoteDataSource {
     CollectionReference managers =
         _firebaseFireStore.collection(FirebaseCollectionConstants.manage);
 
-    final snapShot = await managers.where('login',isEqualTo: userName).get();
+    final snapShot = await managers.where('userLogin',isEqualTo: userName).get();
     return snapShot.docs.isEmpty ? null : UserLoginModel.fromJson(snapShot.docs.first.data(),LoginType.manager);
   }
 
@@ -18,7 +18,7 @@ class LoginRemoteDataSource {
     CollectionReference chefs =
     _firebaseFireStore.collection(FirebaseCollectionConstants.chef);
 
-    final snapShot = await chefs.where('login',isEqualTo: userName).get();
+    final snapShot = await chefs.where('userLogin',isEqualTo: userName).get();
     return snapShot.docs.isEmpty ? null : UserLoginModel.fromJson(snapShot.docs.first.data(),LoginType.chef);
   }
 
@@ -26,7 +26,7 @@ class LoginRemoteDataSource {
     CollectionReference waiters =
     _firebaseFireStore.collection(FirebaseCollectionConstants.waiter);
 
-    final snapShot = await waiters.where('login',isEqualTo: userName).get();
+    final snapShot = await waiters.where('userLogin',isEqualTo: userName).get();
     return snapShot.docs.isEmpty ? null : UserLoginModel.fromJson(snapShot.docs.first.data(),LoginType.waiter);
   }
 }
