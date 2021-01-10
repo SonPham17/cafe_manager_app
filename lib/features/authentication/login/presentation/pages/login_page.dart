@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     LabelRadio(
-                                      label: 'Manager',
+                                      label: 'Quản lý',
                                       padding: EdgeInsets.all(0),
                                       groupValue: _loginType,
                                       value: LoginType.manager,
@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                                       },
                                     ),
                                     LabelRadio(
-                                      label: 'Waiter',
+                                      label: 'Phục vụ',
                                       padding: EdgeInsets.all(0),
                                       groupValue: _loginType,
                                       value: LoginType.waiter,
@@ -164,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                                       },
                                     ),
                                     LabelRadio(
-                                      label: 'Chef',
+                                      label: 'Đầu bếp',
                                       padding: EdgeInsets.all(0),
                                       groupValue: _loginType,
                                       value: LoginType.chef,
@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                                         .read<LoadingCubit>()
                                         .showLoading(false);
                                     if (state is LoginSuccessState) {
-                                      Routes.instance.navigateTo(RouteName.home);
+                                      Routes.instance.navigateAndRemove(RouteName.home);
                                     }
                                   },
                                   builder: (_, state) {

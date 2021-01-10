@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cafe_manager_app/common/blocs/loading/loading_cubit.dart';
 import 'package:cafe_manager_app/common/constants/enum_constants.dart';
 import 'package:cafe_manager_app/common/constants/font_constants.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_translate/global.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatefulWidget {
   final String password;
@@ -23,11 +26,13 @@ class EditProfilePage extends StatefulWidget {
   final String id;
   final String editType;
   final String gender;
+  final String image;
 
   EditProfilePage(
       {this.password,
       this.firstName,
       this.lastName,
+      this.image,
       this.email,
       this.dateOfBirth,
       this.phone,
@@ -43,6 +48,9 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   Gender _genderType = Gender.male;
   DateTime selectedDate = DateTime.now();
+
+  File _image;
+  final picker = ImagePicker();
 
   TextEditingController _controllerPassword = TextEditingController();
   TextEditingController _controllerFirstName = TextEditingController();
@@ -84,17 +92,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
-                width: 200.w,
-                margin: EdgeInsets.only(top: 20.h),
-                height: 200.h,
-                padding: const EdgeInsets.all(3),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage(ImageConstants.avatarDemo),
+              SizedBox(
+                height: 20.h,
+              ),
+              GestureDetector(
+                onTap: () async {
+                  final pickedFile =
+                      await picker.getImage(source: ImageSource.gallery);
+
+                  setState(() {
+                    if (pickedFile != null) {
+                      _image = File(pickedFile.path);
+                    } else {
+                      print('No image selected.');
+                    }
+                  });
+                },
+                child: ClipOval(
+                  child: _image == null
+                      ? (widget.image == null
+                          ? Image.asset(
+                              ImageConstants.avatarDemo,
+                              height: 150,
+                              width: 150,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              widget.image,
+                              height: 150,
+                              width: 150,
+                              fit: BoxFit.cover,
+                            ))
+                      : Image.file(
+                          _image,
+                          height: 150,
+                          width: 150,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               Container(
@@ -425,6 +459,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   onPressed: () async {
                     await Injector.resolve<MainHomeCubit>().updateUser(
                         id: widget.id,
+                        image: _image,
                         typeEdit: widget.editType,
                         password: _controllerPassword.text,
                         firstName: _controllerFirstName.text.trim(),

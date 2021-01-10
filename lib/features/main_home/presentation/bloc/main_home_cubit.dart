@@ -49,7 +49,7 @@ class MainHomeCubit extends Cubit<MainHomeState> {
     ));
   }
 
-  void resetState(){
+  void resetState() {
     state.soMon = 0;
     state.monOrder = '';
     state.soTien = 0;
@@ -116,16 +116,12 @@ class MainHomeCubit extends Cubit<MainHomeState> {
       var linkPath;
       if (image != null) {
         String fileName = basename(image.path);
-        Reference firebaseStorageRef = FirebaseStorage
-            .instance
-            .ref()
-            .child('uploads/${_rdStr(15)}');
-        UploadTask uploadTask =
-        firebaseStorageRef.putFile(image);
+        Reference firebaseStorageRef =
+            FirebaseStorage.instance.ref().child('uploads/${_rdStr(15)}');
+        UploadTask uploadTask = firebaseStorageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask;
 
-        linkPath =
-        await taskSnapshot.ref.getDownloadURL();
+        linkPath = await taskSnapshot.ref.getDownloadURL();
       }
 
       final isSuccess = await mainHomeUseCase.addNewChef(
@@ -186,16 +182,12 @@ class MainHomeCubit extends Cubit<MainHomeState> {
       var linkPath;
       if (image != null) {
         String fileName = basename(image.path);
-        Reference firebaseStorageRef = FirebaseStorage
-            .instance
-            .ref()
-            .child('uploads/${_rdStr(15)}');
-        UploadTask uploadTask =
-        firebaseStorageRef.putFile(image);
+        Reference firebaseStorageRef =
+            FirebaseStorage.instance.ref().child('uploads/${_rdStr(15)}');
+        UploadTask uploadTask = firebaseStorageRef.putFile(image);
         TaskSnapshot taskSnapshot = await uploadTask;
 
-        linkPath =
-        await taskSnapshot.ref.getDownloadURL();
+        linkPath = await taskSnapshot.ref.getDownloadURL();
       }
 
       final isSuccess = await mainHomeUseCase.addNewWaiter(
@@ -211,8 +203,10 @@ class MainHomeCubit extends Cubit<MainHomeState> {
           address: address);
 
       if (isSuccess) {
-        snackBarCubit.showSnackBar('Tao dau bep moi thanh cong!');
+        emit(AddSuccessState());
+        snackBarCubit.showSnackBar('Tạo đầu bếp mới thành công!');
       } else {
+        emit(AddFailedState());
         snackBarCubit.showSnackBar('Tên tài khoản đã tồn tại!');
       }
 
@@ -220,16 +214,18 @@ class MainHomeCubit extends Cubit<MainHomeState> {
     }
   }
 
-  Future<void> updateUser({String password,
-    String firstName,
-    String lastName,
-    String email,
-    String dateOfBirth,
-    Gender gender,
-    String phone,
-    String address,
-    String id,
-    String typeEdit}) async {
+  Future<void> updateUser(
+      {String password,
+      String firstName,
+      String lastName,
+      String email,
+      String dateOfBirth,
+      Gender gender,
+      String phone,
+      String address,
+      File image,
+      String id,
+      String typeEdit}) async {
     loadingCubit.showLoading(true);
     if (password.isEmpty &&
         firstName.isEmpty &&
@@ -250,11 +246,31 @@ class MainHomeCubit extends Cubit<MainHomeState> {
           break;
       }
 
+      var linkPath;
+
       CollectionReference user = _firebaseFireStore.collection(typeEdit);
+
+      final userUpdate = await user.doc(id).get();
+
+      if (image != null) {
+        Reference firebaseStorageRef =
+            FirebaseStorage.instance.ref().child('uploads/${_rdStr(15)}');
+        UploadTask uploadTask = firebaseStorageRef.putFile(image);
+        TaskSnapshot taskSnapshot = await uploadTask;
+
+        linkPath = await taskSnapshot.ref.getDownloadURL();
+      }
+
+      if (userUpdate.data()['image'] != null) {
+        if (image == null) {
+          linkPath = userUpdate.data()['image'];
+        }
+      }
 
       await user.doc(id).update({
         'password': password,
         'firstName': firstName,
+        'image': linkPath,
         'lastName': lastName,
         'email': email,
         'dateOfBirth': dateOfBirth,

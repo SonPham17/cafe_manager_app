@@ -9,7 +9,9 @@ class RouteName{
   static const String createChef = 'create_chef';
   static const String tabTable = 'table';
   static const String tabOrder = 'order';
+  static const String tabReport = 'report';
   static const String tabOrderTable = 'order_table';
+  static const String tabPay = 'pay';
   static const String tabConfirmOrder = 'confirm_order';
   static const String tabDetailOrder = 'detail_order';
 

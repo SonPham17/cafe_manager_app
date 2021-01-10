@@ -3,7 +3,11 @@ import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/features/authentication/login/presentation/pages/login_page.dart';
 import 'package:cafe_manager_app/features/authentication/splash/presentation/pages/splash_page.dart';
 import 'package:cafe_manager_app/features/home/presentation/pages/home_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/confirm_order_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/create_user_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/detail_order_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/order_table_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/pay_page.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -41,6 +45,9 @@ class Routes {
     return navigatorKey.currentState.pop(result);
   }
 
+  dynamic popUntil({dynamic result}) =>
+      navigatorKey.currentState.popUntil((route) => route.isFirst);
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteName.splash:
@@ -51,6 +58,34 @@ class Routes {
         break;
       case RouteName.home:
         return FadeInRoute(widget: HomePage());
+        break;
+      case RouteName.tabPay:
+        return FadeInRoute(widget: PayPage(
+          idBan: settings.arguments as String,
+        ));
+        break;
+      case RouteName.tabConfirmOrder:
+        final param = settings.arguments as Map<String, dynamic>;
+        return FadeInRoute(
+            widget: ConfirmOrderPage(
+              dataMenuDrink: param['listOrder'],
+              ban: '${int.parse(param['ban']) + 1}',
+              idBan: param['idBan'],
+            ));
+        break;
+      case RouteName.tabDetailOrder:
+        return FadeInRoute(
+            widget: DetailOrderPage(
+              orderModel: settings.arguments,
+            ));
+        break;
+      case RouteName.tabOrderTable:
+        final param = settings.arguments as Map<String, dynamic>;
+        return FadeInRoute(
+            widget: OrderTablePage(
+              id: param['id'].toString(),
+              idBan: param['idBan'],
+            ));
         break;
       default:
         return _emptyRoute(settings);

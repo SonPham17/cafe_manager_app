@@ -2,9 +2,11 @@ import 'package:cafe_manager_app/common/constants/enum_constants.dart';
 import 'package:cafe_manager_app/common/constants/font_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
+import 'package:cafe_manager_app/common/manager/user_manager.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/common/widgets/dialog_confirm_done_order.dart';
 import 'package:cafe_manager_app/features/main_home/data/models/order_model.dart';
+import 'package:cafe_manager_app/features/routes.dart';
 import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -156,13 +158,19 @@ class _DetailOrderPageState extends State<DetailOrderPage> {
                 minWidth: 230.w,
                 child: RaisedButton(
                   onPressed: () async {
-                    await showDialog(
+                    final isDone = await showDialog(
                         context: context,
                         builder: (_) => DialogConfirmDoneOrder(
                               orderModel: widget.orderModel,
                             ));
 
-                    RoutesTabBottom.instance.popUntil(TabItem.main);
+                    if (isDone != null && isDone) {
+                      if(UserManager.instance.getUserLoginType() == LoginType.manager){
+                        RoutesTabBottom.instance.popUntil(TabItem.main);
+                      }else{
+                        Routes.instance.popUntil();
+                      }
+                    }
                   },
                   color: AppColors.primaryColor,
                   padding: EdgeInsets.only(top: 10, bottom: 10),

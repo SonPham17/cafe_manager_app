@@ -3,6 +3,7 @@ import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/extensions/my_iterable_extensions.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
+import 'package:cafe_manager_app/common/manager/user_manager.dart';
 import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/common/widgets/custom_expandable_listview_widget.dart';
@@ -10,6 +11,7 @@ import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_state.dart';
 import 'package:cafe_manager_app/features/menu/data/models/menu_type_model.dart';
 import 'package:cafe_manager_app/features/menu/presentation/bloc/menu_cubit.dart';
+import 'package:cafe_manager_app/features/routes.dart';
 import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +24,7 @@ class OrderTablePage extends StatefulWidget {
   final String id;
   final String idBan;
 
-  OrderTablePage({this.id,this.idBan});
+  OrderTablePage({this.id, this.idBan});
 
   @override
   _OrderTablePageState createState() => _OrderTablePageState();
@@ -167,12 +169,13 @@ class _OrderTablePageState extends State<OrderTablePage> {
 
                               final data = snapshot.data.docs;
                               final dataDrink = data
-                                  .map((e) => MenuDrink.fromJson(e.data(),e.id))
+                                  .map(
+                                      (e) => MenuDrink.fromJson(e.data(), e.id))
                                   .toList();
 
                               data.forEach((element) {
-                                dataMenuDrink
-                                    .add(MenuDrink.fromJson(element.data(),element.id));
+                                dataMenuDrink.add(MenuDrink.fromJson(
+                                    element.data(), element.id));
                               });
 
                               return CustomExpandableListView(
@@ -360,13 +363,23 @@ class _OrderTablePageState extends State<OrderTablePage> {
                           .where((element) => element.order > 0)
                           .toList();
 
-                      RoutesTabBottom.instance.navigateTo(
-                          TabItem.main, RouteName.tabConfirmOrder,
-                          arguments: {
-                            'listOrder' : listOrder,
-                            'ban' : widget.id,
-                            'idBan': widget.idBan,
-                          });
+                      if (UserManager.instance.getUserLoginType() ==
+                          LoginType.manager) {
+                        RoutesTabBottom.instance.navigateTo(
+                            TabItem.main, RouteName.tabConfirmOrder,
+                            arguments: {
+                              'listOrder': listOrder,
+                              'ban': widget.id,
+                              'idBan': widget.idBan,
+                            });
+                      } else {
+                        Routes.instance
+                            .navigateTo(RouteName.tabConfirmOrder, arguments: {
+                          'listOrder': listOrder,
+                          'ban': widget.id,
+                          'idBan': widget.idBan,
+                        });
+                      }
                     },
                     child: Align(
                       alignment: Alignment.bottomCenter,

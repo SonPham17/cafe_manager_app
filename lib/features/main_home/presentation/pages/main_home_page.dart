@@ -81,6 +81,16 @@ class _MainHomePageState extends State<MainHomePage> {
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 20.h,
+                ),
+                CardHome(
+                  onTap: (){
+                    RoutesTabBottom.instance.navigateTo(TabItem.main, RouteName.tabReport);
+                  },
+                  label: 'Báo cáo doanh thu',
+                  icon: IconConstants.report,
+                ),
               ],
             ),
           )

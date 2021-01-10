@@ -34,6 +34,7 @@ class _WaiterPageState extends State<WaiterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Bồi bàn'),
         actions: [
           UserManager.instance.getUserLoginType() == LoginType.manager

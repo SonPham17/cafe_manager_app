@@ -9,6 +9,8 @@ import 'package:cafe_manager_app/features/main_home/presentation/pages/edit_prof
 import 'package:cafe_manager_app/features/main_home/presentation/pages/main_home_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/order_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/order_table_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/pay_page.dart';
+import 'package:cafe_manager_app/features/main_home/presentation/pages/report_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/table_page.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/pages/waiter_page.dart';
 import 'package:cafe_manager_app/features/menu/presentation/pages/menu_page.dart';
@@ -67,6 +69,14 @@ class RoutesTabBottom {
       case RouteName.tabHomeWaiter:
         return FadeInRoute(widget: WaiterPage());
         break;
+      case RouteName.tabReport:
+        return FadeInRoute(widget: ReportPage());
+        break;
+      case RouteName.tabPay:
+        return FadeInRoute(widget: PayPage(
+          idBan: settings.arguments as String,
+        ));
+        break;
       case RouteName.tabConfirmOrder:
         final param = settings.arguments as Map<String, dynamic>;
         return FadeInRoute(
@@ -107,6 +117,7 @@ class RoutesTabBottom {
         final params = settings.arguments as Map<String, dynamic>;
         return FadeInRoute(
             widget: EditProfilePage(
+          image: params['image'],
           password: params['password'],
           firstName: params['firstName'],
           gender: params['gender'],

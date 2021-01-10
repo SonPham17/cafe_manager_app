@@ -27,7 +27,7 @@ class _SettingPageState extends State<SettingPage> {
             child: Column(
               children: [
                 SizedBox(
-                  height: 110.h,
+                  height: 110,
                 ),
                 Center(
                   child: ClipOval(

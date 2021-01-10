@@ -5,8 +5,10 @@ import 'package:cafe_manager_app/common/constants/firebase_collection_constants.
 import 'package:cafe_manager_app/common/constants/font_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
+import 'package:cafe_manager_app/common/manager/user_manager.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/features/menu/data/models/menu_type_model.dart';
+import 'package:cafe_manager_app/features/routes.dart';
 import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -138,9 +140,23 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
               SizedBox(
                 height: 20.h,
               ),
-              Text(
-                'Tổng tiền= $tongTien = ${formatter.format(tong)} vnđ',
-                style: TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Icon(
+                    Icons.monetization_on,
+                    color: Colors.deepOrange[400],
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Tổng tiền= $tongTien = ${formatter.format(tong)} vnđ',
+                      style: TextStyle(
+                          fontSize: 25.sp, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 40.h,
@@ -154,31 +170,48 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
                     CollectionReference orders = _firebaseFireStore
                         .collection(FirebaseCollectionConstants.order);
 
+                    CollectionReference pays = _firebaseFireStore
+                        .collection(FirebaseCollectionConstants.pay);
+
                     var idMon = '';
                     var soLuongMon = '';
                     var idTypeMon = '';
+                    var tenMon = '';
 
                     for (int i = 0; i < widget.dataMenuDrink.length; i++) {
                       idMon += '${widget.dataMenuDrink[i].id}';
                       soLuongMon += '${widget.dataMenuDrink[i].order}';
                       idTypeMon += '${widget.dataMenuDrink[i].idType}';
+                      tenMon += '${widget.dataMenuDrink[i].name}';
                       if (i != widget.dataMenuDrink.length - 1) {
                         idMon += ',';
                         soLuongMon += ',';
                         idTypeMon += ',';
+                        tenMon += ',';
                       }
                     }
 
                     await orders.add({
                       'tongTien': tong,
                       'ban': widget.ban,
-                      'idBan' : widget.idBan,
+                      'idBan': widget.idBan,
                       'idMon': idMon,
                       'soLuongMon': soLuongMon,
-                      'idTypeMon' : idTypeMon,
+                      'idTypeMon': idTypeMon,
+                      'tenMon': tenMon,
                     }).then((value) async {
                       CollectionReference tables = _firebaseFireStore
                           .collection(FirebaseCollectionConstants.table);
+
+                      await pays.add({
+                        'tongTien': tong,
+                        'ban': widget.ban,
+                        'idBan': widget.idBan,
+                        'idMon': idMon,
+                        'soLuongMon': soLuongMon,
+                        'idTypeMon': idTypeMon,
+                        'tenMon': tenMon,
+                      });
 
                       await tables
                           .doc(widget.idBan)
@@ -192,7 +225,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> {
                         .showSnackBar('Order thất bại!'));
 
                     Injector.resolve<LoadingCubit>().showLoading(false);
-                    RoutesTabBottom.instance.popUntil(TabItem.main);
+
+                    if (UserManager.instance.getUserLoginType() ==
+                        LoginType.manager) {
+                      RoutesTabBottom.instance.popUntil(TabItem.main);
+                    } else {
+                      Routes.instance.popUntil();
+                    }
                   },
                   color: AppColors.primaryColor,
                   padding: EdgeInsets.only(top: 10, bottom: 10),

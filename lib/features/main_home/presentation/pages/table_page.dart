@@ -4,10 +4,12 @@ import 'package:cafe_manager_app/common/constants/icon_constants.dart';
 import 'package:cafe_manager_app/common/extensions/my_iterable_extensions.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
 import 'package:cafe_manager_app/common/injector/injector.dart';
+import 'package:cafe_manager_app/common/manager/user_manager.dart';
 import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/common/widgets/dialog_add_table.dart';
 import 'package:cafe_manager_app/features/main_home/presentation/bloc/main_home_cubit.dart';
+import 'package:cafe_manager_app/features/routes.dart';
 import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -25,13 +27,26 @@ class _TablePageState extends State<TablePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading:
+            UserManager.instance.getUserLoginType() == LoginType.manager
+                ? true
+                : false,
         title: Text('Danh sách bàn'),
+        centerTitle: true,
         actions: [
-          IconButton(
-              icon: Icon(Icons.add_circle),
-              onPressed: () {
-                showDialog(context: context, builder: (_) => DialogAddTable());
-              })
+          UserManager.instance.getUserLoginType() == LoginType.manager
+              ? IconButton(
+                  icon: Icon(Icons.add_circle),
+                  onPressed: () {
+                    showDialog(
+                        context: context, builder: (_) => DialogAddTable());
+                  })
+              : IconButton(
+                  icon: Icon(Icons.logout),
+                  onPressed: () async {
+                    await UserManager.instance.logOut();
+                    Routes.instance.navigateAndRemove(RouteName.login);
+                  }),
         ],
       ),
       body: Container(
@@ -80,12 +95,21 @@ class _TablePageState extends State<TablePage> {
                       onTap: () {
                         Injector.resolve<MainHomeCubit>().resetState();
 
-                        RoutesTabBottom.instance.navigateTo(
-                            TabItem.main, RouteName.tabOrderTable,
-                            arguments: {
-                              'id': data[index]['id'],
-                              'idBan': data[index].id,
-                            });
+                        if (UserManager.instance.getUserLoginType() ==
+                            LoginType.manager) {
+                          RoutesTabBottom.instance.navigateTo(
+                              TabItem.main, RouteName.tabOrderTable,
+                              arguments: {
+                                'id': data[index]['id'],
+                                'idBan': data[index].id,
+                              });
+                        } else {
+                          Routes.instance
+                              .navigateTo(RouteName.tabOrderTable, arguments: {
+                            'id': data[index]['id'],
+                            'idBan': data[index].id,
+                          });
+                        }
                       },
                       child: Container(
                         padding: EdgeInsets.all(10),
@@ -108,34 +132,47 @@ class _TablePageState extends State<TablePage> {
                         ),
                       ),
                     )
-                  : Ribbon(
-                      nearLength: 60,
-                      farLength: 12,
-                      title: 'Order',
-                      titleStyle: TextStyle(
-                          color: Colors.greenAccent,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                      color: Colors.redAccent,
-                      location: RibbonLocation.topStart,
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.black.withOpacity(0.4)),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              IconConstants.tableOrder,
-                              color: AppColors.primaryColor,
-                            ),
-                            Text(
-                              'Bàn ${1 + data[index]['id']}',
-                              style: TextStyle(
-                                  fontSize: 30.sp, color: Colors.white),
-                            ),
-                          ],
+                  : GestureDetector(
+                      onTap: () {
+                        if (UserManager.instance.getUserLoginType() ==
+                            LoginType.manager) {
+                          RoutesTabBottom.instance.navigateTo(
+                              TabItem.main, RouteName.tabPay,
+                              arguments: data[index].id);
+                        } else {
+                          Routes.instance
+                              .navigateTo(RouteName.tabPay, arguments: data[index].id);
+                        }
+                      },
+                      child: Ribbon(
+                        nearLength: 60,
+                        farLength: 12,
+                        title: 'Order',
+                        titleStyle: TextStyle(
+                            color: Colors.greenAccent,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                        color: Colors.redAccent,
+                        location: RibbonLocation.topStart,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.black.withOpacity(0.4)),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                IconConstants.tableOrder,
+                                color: AppColors.primaryColor,
+                              ),
+                              Text(
+                                'Bàn ${1 + data[index]['id']}',
+                                style: TextStyle(
+                                    fontSize: 30.sp, color: Colors.white),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

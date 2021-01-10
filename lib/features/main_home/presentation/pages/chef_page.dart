@@ -33,6 +33,7 @@ class _ChefPageState extends State<ChefPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Đầu bếp'),
+        centerTitle: true,
         actions: [
           UserManager.instance.getUserLoginType() == LoginType.manager
               ? IconButton(

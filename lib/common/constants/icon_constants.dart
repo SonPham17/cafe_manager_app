@@ -6,4 +6,5 @@ class IconConstants{
   static const String table = '${path}table.svg';
   static const String gender = '${path}gender.svg';
   static const String tableOrder = '${path}table_order.svg';
+  static const String report = '${path}report.svg';
 }

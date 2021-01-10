@@ -3,9 +3,11 @@ import 'package:cafe_manager_app/common/constants/firebase_collection_constants.
 import 'package:cafe_manager_app/common/constants/icon_constants.dart';
 import 'package:cafe_manager_app/common/constants/image_constants.dart';
 import 'package:cafe_manager_app/common/extensions/screen_extensions.dart';
+import 'package:cafe_manager_app/common/manager/user_manager.dart';
 import 'package:cafe_manager_app/common/navigation/route_name.dart';
 import 'package:cafe_manager_app/common/themes/app_colors.dart';
 import 'package:cafe_manager_app/features/main_home/data/models/order_model.dart';
+import 'package:cafe_manager_app/features/routes.dart';
 import 'package:cafe_manager_app/features/routes_tab_bottom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +27,22 @@ class _OrderPageState extends State<OrderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading:
+            UserManager.instance.getUserLoginType() == LoginType.manager
+                ? true
+                : false,
         title: Text('Danh sách order'),
+        centerTitle: true,
+        actions: [
+          UserManager.instance.getUserLoginType() == LoginType.manager
+              ? Container()
+              : IconButton(
+                  icon: Icon(Icons.logout),
+                  onPressed: () async {
+                    await UserManager.instance.logOut();
+                    Routes.instance.navigateAndRemove(RouteName.login);
+                  }),
+        ],
       ),
       body: Container(
         margin: EdgeInsets.only(top: 10.h, bottom: 10.h),
@@ -63,14 +80,19 @@ class _OrderPageState extends State<OrderPage> {
 
             final data = snapshot.data.docs;
             final listData =
-                data.map((e) => OrderModel.fromJson(e.data(),e.id)).toList();
+                data.map((e) => OrderModel.fromJson(e.data(), e.id)).toList();
             return ListView.separated(
                 itemBuilder: (_, index) {
                   return GestureDetector(
                     onTap: () {
-                      RoutesTabBottom.instance.navigateTo(
-                          TabItem.main, RouteName.tabDetailOrder,
-                          arguments: listData[index]);
+                      if(UserManager.instance.getUserLoginType() == LoginType.manager){
+                        RoutesTabBottom.instance.navigateTo(
+                            TabItem.main, RouteName.tabDetailOrder,
+                            arguments: listData[index]);
+                      }else{
+                        Routes.instance.navigateTo(RouteName.tabDetailOrder,arguments: listData[index]);
+                      }
+
                     },
                     child: Card(
                       elevation: 10,

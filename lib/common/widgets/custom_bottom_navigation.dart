@@ -14,7 +14,7 @@ final Map<TabItem, String> tabName = {
 final Map<TabItem, IconData> tabImage = {
   TabItem.main: Icons.home_filled,
   TabItem.menu: Icons.restaurant_menu,
-  TabItem.setting: Icons.settings,
+  TabItem.setting: Icons.person_rounded,
 };
 
 class CustomBottomNavigation extends StatelessWidget {

@@ -6,10 +6,12 @@ import 'package:cafe_manager_app/common/injector/injector.dart';
 import 'package:cafe_manager_app/features/main_home/data/models/order_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DialogConfirmDoneOrder extends StatelessWidget {
   final FirebaseFirestore _firebaseFireStore = FirebaseFirestore.instance;
   final OrderModel orderModel;
+  final formatterTime = new DateFormat.Hms();
 
   DialogConfirmDoneOrder({this.orderModel});
 
@@ -58,24 +60,14 @@ class DialogConfirmDoneOrder extends StatelessWidget {
                             .doc(orderModel.id)
                             .delete()
                             .then((value) async {
-                          CollectionReference tables = _firebaseFireStore
-                              .collection(FirebaseCollectionConstants.table);
-
-                          await tables
-                              .doc('${orderModel.idBan}')
-                              .update({'isEmpty': true}).then((value) {
-                            Injector.resolve<SnackBarCubit>()
+                          Injector.resolve<SnackBarCubit>()
                                 .showSnackBar('Hoàn thành đơn thành công');
-                          }).catchError((error) {
-                            Injector.resolve<SnackBarCubit>()
-                                .showSnackBar('Hoàn thành đơn thất bại');
-                          });
                         }).catchError((error) {
                           Injector.resolve<SnackBarCubit>()
                               .showSnackBar('Hoàn thành đơn thất bại');
                         });
 
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(true);
                         Injector.resolve<LoadingCubit>().showLoading(false);
                       },
                       child: Center(
@@ -103,7 +95,7 @@ class DialogConfirmDoneOrder extends StatelessWidget {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(false);
                       },
                       child: Center(
                         child: Container(

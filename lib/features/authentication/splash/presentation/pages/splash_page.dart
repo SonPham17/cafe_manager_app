@@ -35,10 +35,10 @@ class _SplashPageState extends State<SplashPage> {
         cubit: _splashCubit,
         listener: (_, state) {
           if (state is UserLoggedState) {
-            Routes.instance.navigateTo(RouteName.home);
+            Routes.instance.navigateAndRemove(RouteName.home);
             print(state.userLoginModel.loginType);
           } else if (state is UserNotLoginState) {
-            Routes.instance.navigateTo(RouteName.login);
+            Routes.instance.navigateAndRemove(RouteName.login);
           }
         },
         child: Container(

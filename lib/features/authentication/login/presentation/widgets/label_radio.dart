@@ -30,7 +30,7 @@ class LabelRadio extends StatelessWidget {
                 onChanged(newValue);
               },
             ),
-            Text(label),
+            Text(label,style: TextStyle(fontSize: 12),),
           ],
         ),
       ),
